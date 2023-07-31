@@ -1,0 +1,33 @@
+modules:
+### Non LLM Modules
+  - name: human_intervention
+    description: "Records terminal input from user"
+    is_llm: false
+### LLM Modules - These should have a system prompt in the systems folder.
+  - name: planner
+    description: "Generates a plan from a task"
+    is_llm: true
+  - name: scrutinizer
+    description: "Scrutinizes a plan or piece of information and provides feedback"
+    is_llm: true
+  - name: enhancer
+    description: "Enhances a plan with additional information. Best used with a scrutinizer."
+    is_llm: true
+  - name: grounder
+    description: "Provides real world grounding for a plan, pointing out unrealistic actions"
+    is_llm: true
+  - name: dreamer
+    description: "Adds creative flair and inspiration to a plan"
+    is_llm: true
+
+## Other modules to add
+# Programmer
+# Code executor, should have built in llm based while loop debugger
+# Test
+# Translator
+# Image generator
+# Save to file
+# Load from file
+# Standard API call
+# clarification step
+# summarization step

@@ -1,0 +1,16 @@
+pipeline: 
+  - module: human_intervention 
+    inputs: []
+    output_name: human_input
+  - module: planner 
+    inputs: ["human_input"]
+    output_name: plan 
+  - module: dreamer 
+    inputs: ["plan"]
+    output_name: dream_plan
+  - module: human_intervention 
+    inputs: []
+    output_name: human_input
+  - module: enhancer 
+    inputs: ["human_input", "dream_plan"]
+    output_name: enhanced_plan
