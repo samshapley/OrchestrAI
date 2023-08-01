@@ -1,16 +1,19 @@
 pipeline: 
-  - module: human_intervention 
+  - module: start_module
     inputs: []
-    output_name: human_input
-  - module: planner 
-    inputs: ["human_input"]
-    output_name: plan 
-  - module: dreamer 
-    inputs: ["plan"]
-    output_name: dream_plan
-  - module: human_intervention 
-    inputs: []
-    output_name: human_input
-  - module: enhancer 
-    inputs: ["human_input", "dream_plan"]
+    output_name: request
+  - module: task_planner
+    inputs: [request]
+    output_name: task_plan
+  - module: scrutinizer
+    inputs: [task_plan]
+    output_name: scrutinized_plan
+  - module: enhancer
+    inputs: [scrutinized_plan, task_plan]
     output_name: enhanced_plan
+  - module: code_planner
+    inputs: [enhanced_plan]
+    output_name: code_plan
+  - module: engineer
+    inputs: [code_plan]
+    output_name: code
