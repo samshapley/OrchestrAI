@@ -16,7 +16,7 @@ To run OrchestrAI, you'll need:
 You can install these with pip:
 
 ```bash
-pip install openai networkx pyyaml
+pip install -r requirements.txt
 ```
 
 ### Configuration
