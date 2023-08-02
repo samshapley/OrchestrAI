@@ -1,43 +1,76 @@
 # modules.py
+import helpers as h
 from ai import AI
 import os
-
-def load_system_prompt(module_name):
-    with open(f'system_prompts/{module_name}.txt', 'r') as file:
-        return file.read().replace('\n', '')
     
 def start_module(prompt):
     print("\033[92mPlease specify the task you want to perform:\033[00m")
-    return input(prompt), []
+    start = input()
+    return prompt + start, []
 
 def human_intervention(prompt):
     print("Please provide additional information to guide the agent:")
-    return input(prompt), []
+    additional_info = input()
+    return prompt + additional_info, []
 
 def task_planner(prompt):
-    system_prompt = load_system_prompt("task_planner")
+    system_prompt = h.load_system_prompt("task_planner")
     ai = AI(system=system_prompt, model='gpt-4')
-    return ai.generate_response(prompt)
+    response, messages = ai.generate_response(prompt)
+    print(response)
+    return response, messages
 
 def scrutinizer(prompt):
-    system_prompt = load_system_prompt("scrutinizer")
+    system_prompt = h.load_system_prompt("scrutinizer")
     ai = AI(system=system_prompt, model='gpt-4')
-    return ai.generate_response(prompt)
+    response, messages = ai.generate_response(prompt)
+    print(response)
+    return response, messages
 
 def enhancer(prompt):
-    system_prompt = load_system_prompt("enhancer")
+    system_prompt = h.load_system_prompt("enhancer")
     ai = AI(system=system_prompt, model='gpt-4')
-    return ai.generate_response(prompt)
+    response, messages = ai.generate_response(prompt)
+    print(response)
+    return response, messages
 
 def code_planner(prompt):
-    system_prompt = load_system_prompt("code_planner")
+    system_prompt = h.load_system_prompt("code_planner")
     ai = AI(system=system_prompt, model='gpt-4')
-    return ai.generate_response(prompt)
+    print("\033[93mPlanning code...\033[00m")
+    response, messages = ai.generate_response(prompt)
+    print(response)
+    return response, messages
+
+def debugger(prompt):
+    system_prompt = h.load_system_prompt("debugger")
+    ai = AI(system=system_prompt, model='gpt-4')
+    print("\033[93mDebugging code...\033[00m")
+    response, messages = ai.generate_response(prompt)
+    print(response)
+    return response, messages
 
 def engineer(prompt):
-    system_prompt = load_system_prompt("engineer")
+    system_prompt = h.load_system_prompt("engineer")
     ai = AI(system=system_prompt, model='gpt-4')
-    return ai.generate_response(prompt)
+    print("\033[93mGenerating code...\033[00m")
+    response, messages = ai.generate_response(prompt)
+    print(response)
+    
+    # Parse the chat and extract files
+    print("\033[95mExtracting code...\033[00m")
+    files = h.parse_chat(response)
+    
+    # Save files to disk
+    h.to_files(files)
 
-# Define other module functions here
+    # Run the requirements.txt file in generated_code folder with pip3
+    print("\033[94mInstalling dependencies...\033[00m")
+    os.system("pip3 install -r generated_code/requirements.txt")
+    print("\033[92mDependencies Done!\033[00m")
 
+    # In a while loop, run main.py, and if it crashes, pass the full codebase to the debugger.
+    print("\033[91mRunning code...\033[00m")
+    os.system("python3 generated_code/main.py")
+    
+    return response, messages

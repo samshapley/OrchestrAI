@@ -25,7 +25,7 @@ def process_file(filename, outfile):
     filepath = os.path.join(get_current_dir(), filename)
     
     # Check if the file is a .py or .yml file
-    if filename.endswith('.yml') or filename.endswith('.py'):
+    if filename.endswith('.yml') or filename.endswith('.py') or filename.endswith('.md'):
         try:
             with open(filepath, 'r') as infile:
                 # Read the contents of the file, remove line breaks and leading spaces
