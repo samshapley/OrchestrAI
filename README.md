@@ -1,6 +1,6 @@
 # OrchestrAI
 
-OrchestrAI is a modular system for orchestrating interactions between several instances of OpenAI's GPT-4 model, potentially trained with different settings or data, in order to accomplish complex tasks. The system is built in Python and leverages the `networkx` library to handle the dependencies between different AI modules.
+OrchestrAI is a powerful system built in Python that enables complex task execution by orchestrating interactions between multiple instances of OpenAI's GPT-4 model. It uses the `networkx` library to handle dependencies between various AI modules, and YAML to define and manage the task pipelines.
 
 ## Getting Started
 
@@ -9,7 +9,7 @@ OrchestrAI is a modular system for orchestrating interactions between several in
 To run OrchestrAI, you'll need:
 
 - Python 3.7 or later
-- The OpenAI Python library
+- OpenAI Python library
 - networkx
 - PyYAML
 
@@ -21,13 +21,34 @@ pip install openai networkx pyyaml
 
 ### Configuration
 
-To configure OrchestrAI, you'll need to set up a few files:
+To set up OrchestrAI, you need to organize the following files:
 
-- `ai.py` contains the AI class, which manages interactions with an OpenAI GPT-4 model. You'll need to set your OpenAI API key in this file.
-- `modules.yml` lists the AI modules available for use. Each module is either a large language model (LLM) or a non-LLM module. LLM modules are driven by OpenAI's GPT-4, while non-LLM modules are placeholders for manual human intervention.
-- `orchestrate.py` is the main script, which loads the modules and pipelines, constructs a directed acyclic graph (DAG) of operations, and executes them in the correct order.
-- The `systems/` directory contains a text file for each LLM module, which provides an introductory prompt for the module.
-- The `pipelines/` directory contains one or more YAML files describing pipelines of operations to execute.
+- `ai.py` - This file contains the AI class, which manages interactions with the OpenAI GPT-4 model. Your OpenAI API key must be set in this file.
+- `modules.py` - This script lists the available AI modules.
+- `orchestrate.py` - This main script loads modules and pipelines, constructs a Directed Acyclic Graph (DAG) of operations, and executes them in the correct order.
+- `helpers.py` - This script provides helper functions, including loading system prompts, parsing chat data, and writing code files.
+- `pipeline.yml` - This YAML file describes the sequence of operations to be executed in your pipeline.
+
+### Setting Up a Pipeline
+
+1. Define your pipeline in the `pipeline.yml` file. Each operation in the pipeline consists of a `module` and an `output_name`. The `module` represents a specific task performed by an AI, and the `output_name` is the output of that task, which can be used as input for subsequent operations. Here's an example of a simple pipeline:
+
+```yaml
+pipeline:
+- module: start_module
+  inputs: []
+  output_name: request
+- module: code_planner
+  inputs: [request]
+  output_name: code_plan
+- module: engineer
+  inputs: [code_plan]
+  output_name: code
+```
+
+2. Save and close the `pipeline.yml` file.
+
+3. Run the `orchestrate.py` script.
 
 ### Running the Script
 
@@ -37,26 +58,18 @@ To run OrchestrAI, execute `orchestrate.py`:
 python orchestrate.py
 ```
 
-The script will execute the operations in the pipeline(s) as specified, querying the GPT-4 model as necessary and storing the results.
+The script will execute the operations in the pipeline in the order specified, querying the GPT-4 model as necessary and storing the results.
 
 ## Understanding the Modules
 
-Each module in the `modules.yml` file is either an LLM module or a non-LLM module.
+The `modules.py` file contains different AI modules, each responsible for a specific type of operation, such as `start_module`, `human_intervention`, `task_planner`, `scrutinizer`, `enhancer`, `code_planner`, `debugger`, and `engineer`.
 
-LLM modules, like `planner`, `scrutinizer`, `enhancer`, `grounder`, and `dreamer`, each have a specific role:
-
-- `planner` generates a plan from a task.
-- `scrutinizer` scrutinizes a plan or piece of information and provides feedback.
-- `enhancer` enhances a plan with additional information.
-- `grounder` provides real-world grounding for a plan, pointing out unrealistic actions.
-- `dreamer` adds creative flair and inspiration to a plan.
-
-Non-LLM modules, like `human_intervention`, record terminal input from the user.
+Each module interacts with the GPT-4 model to execute its specific task, and the output is stored for use in subsequent operations as defined in the pipeline.
 
 ## Contributing
 
-We welcome contributions to OrchestrAI! Please submit a pull request with your changes, and be sure to include tests and documentation.
+Contributions to OrchestrAI are welcome! Please submit a pull request with your changes, and be sure to include tests and documentation.
 
 ## License
 
-OrchestrAI is open-source software, released under the [MIT License](https://opensource.org/licenses/MIT).
+OrchestrAI is open-source software, released under the MIT License.

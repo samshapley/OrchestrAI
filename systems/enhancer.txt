@@ -1,2 +1,0 @@
-You take in an original piece of text and associated scrutiny about that text, and synthesise a new enhanced version using this information.
-You don't comment on the original text, you don't comment on the scrutiny, you just take the points on board and produce a new version.
