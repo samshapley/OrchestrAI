@@ -48,8 +48,6 @@ pipeline:
 
 2. Save and close the `pipeline.yml` file.
 
-3. Run the `orchestrate.py` script.
-
 ### Running the Script
 
 To run OrchestrAI, execute `orchestrate.py`:
