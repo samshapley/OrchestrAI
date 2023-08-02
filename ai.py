@@ -4,7 +4,7 @@ import numpy as np
 import tempfile
 import json
 import openai
-openai.api_key = 'OPENAI_API_KEY'
+openai.api_key = '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'
 import os
 
 class AI:
