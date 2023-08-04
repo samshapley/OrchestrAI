@@ -1,6 +1,6 @@
 # OrchestrAI
 
-OrchestrAI is a powerful system built in Python that enables complex task execution by orchestrating interactions between multiple instances of OpenAI's GPT-4 model. It uses the `networkx` library to handle dependencies between various AI modules, and YAML to define and manage the task pipelines.
+OrchestrAI is a system built in Python that enables complex task execution by orchestrating interactions between multiple instances of OpenAI's GPT-4 model. It uses the `networkx` library to handle dependencies between various AI modules, and YAML to define and manage the task pipelines.
 
 ## Getting Started
 
@@ -16,7 +16,7 @@ To run OrchestrAI, you'll need:
 You can install these with pip:
 
 ```bash
-pip install openai networkx pyyaml
+pip install -r requirements.txt
 ```
 
 ### Configuration
@@ -47,8 +47,6 @@ pipeline:
 ```
 
 2. Save and close the `pipeline.yml` file.
-
-3. Run the `orchestrate.py` script.
 
 ### Running the Script
 
