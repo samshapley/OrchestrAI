@@ -2,10 +2,22 @@ pipeline:
   - module: start_module
     inputs: []
     output_name: request
-  - module: code_planner
+  - module: task_planner
     inputs: [request]
+    output_name: task_plan
+  - module: scrutinizer
+    inputs: [request, task_plan]
+    output_name: scrutinized_task_plan
+  - module: enhancer
+    inputs: [request, scrutinized_task_plan, task_plan]
+    output_name: enhanced_task_plan
+  - module: code_planner
+    inputs: [request, enhanced_task_plan]
     supplement: "Use only python."
     output_name: code_plan
   - module: engineer
     inputs: [code_plan]
     output_name: code
+  - module: debugger
+    inputs: [code]
+    output_name: debugged_code

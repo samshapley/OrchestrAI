@@ -4,6 +4,7 @@ import json
 # Ignore list, a list of files to ignore if name matches
 ignore = [
     'prompt.py',
+    'README.md',
 ] 
 
 def get_current_dir():

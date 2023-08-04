@@ -1,11 +1,10 @@
-import wave
-import math
-import numpy as np
-import tempfile
 import json
 import openai
-openai.api_key = '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'
+openai.api_key = ''
 import os
+import datetime
+import json
+from logging import Logger
 
 class AI:
     def __init__(self, system="", model = 'gpt-4', openai=openai):
@@ -14,13 +13,24 @@ class AI:
         self.openai = openai
         self.messages = [{"role": "system", "content": system}]
 
+
     def generate_response(self, prompt):
         self.messages.append({"role": "user", "content": prompt})
-        response_json = self.openai.ChatCompletion.create(
+        response = self.openai.ChatCompletion.create(
             model=self.model,
+            stream=True,
             messages=self.messages,
         )
-        response_text = response_json["choices"][0]["message"]["content"]
+        chat = []
+        for chunk in response:
+            delta = chunk["choices"][0]["delta"]  # type: ignore
+            msg = delta.get("content", "")
+            print(msg, end="")
+            chat.append(msg)
+
+        print()
+
+        response_text = "".join(chat)
 
         self.messages.append({"role": "assistant", "content": response_text})
         return response_text, self.messages
