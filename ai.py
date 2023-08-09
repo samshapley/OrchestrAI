@@ -1,10 +1,6 @@
-import json
 import openai
 openai.api_key = ''
-import os
-import datetime
 import json
-from logging import Logger
 
 class AI:
     def __init__(self, system="", model = 'gpt-4', openai=openai):

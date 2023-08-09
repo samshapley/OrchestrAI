@@ -1,5 +1,6 @@
 import os
 import re
+import subprocess
 
 def load_system_prompt(module_name):
     
@@ -14,6 +15,7 @@ def load_system_prompt(module_name):
     return system_prompt
 
 def parse_chat(chat):
+    print("\033[95mExtracting code...\033[00m")
     # Get all ``` blocks and preceding filenames
     regex = r"(\S+)\n\s*```[^\n]*\n(.+?)```"
     matches = re.finditer(regex, chat, re.DOTALL)
@@ -31,6 +33,16 @@ def parse_chat(chat):
 def to_files(files):
     if not os.path.exists("generated_code"):
         os.mkdir("generated_code")
+    
+    # Create an empty requirements.txt file by default
+    with open(os.path.join("generated_code", "requirements.txt"), "w") as req_file:
+        req_file.write("")
+
     for file_name, file_content in files:
         with open(os.path.join("generated_code", file_name), "w") as file:
             file.write(file_content)
+
+def run_main():
+    # This will run the main.py in a separate process and return the exit code and any error message
+    result = subprocess.run(["python", "generated_code/main.py"], text=True, capture_output=True)
+    return result.returncode, result.stderr

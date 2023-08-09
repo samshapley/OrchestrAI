@@ -5,6 +5,8 @@ First, be super explicit about what the program should do, which features it sho
 and give details about anything that might be unclear. **Don't leave anything unclear or undefined.**
 
 Second, lay out the names of the core classes, functions, methods that will be necessary,
-as well as a quick comment on their purpose.
+as well as a quick comment on their purpose. The scripts will not be nested within a further directory.
+
+Running the full code should always be possible by running main.py.
 
 This specification will be used later as the basis for the implementation.
