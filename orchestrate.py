@@ -10,6 +10,9 @@ with open('pipeline.yml') as f:
 # Create the DAG
 G = nx.DiGraph()
 
+# Create an empty string to store our ASCII pipeline representation
+ascii_pipeline = ""
+
 # Data dictionary to store the outputs of each module
 data_dict = {}
 
@@ -25,6 +28,13 @@ for operation in pipeline['pipeline']:
   # Add edges for inputs
   for i in inputs:
     G.add_edge(i, output_name)
+
+  # Add this operation to our ASCII pipeline representation
+  ascii_pipeline += "{} --> {} --> {}\n".format(inputs, module_name, output_name)
+
+
+print("\033[95mLoading pipeline...\033[00m")
+print(ascii_pipeline)
 
 # Now you can use topological sort to get the execution order:
 execution_order = list(nx.topological_sort(G))

@@ -57,27 +57,17 @@ def code_planner(prompt):
     logger.log_action(module_name, prompt, response, 'gpt-4')
     return response, messages
 
-def debugger(prompt):
-    module_name = "debugger"
-    system_prompt = h.load_system_prompt("debugger")
-    ai = AI(system=system_prompt, model='gpt-4')
-    print("\033[93mDebugging code...\033[00m")
-    response, messages = ai.generate_response(prompt)
-
-    logger.log_action(module_name, prompt, response, 'gpt-4')
-    return response, messages
-
 def engineer(prompt):
     module_name = "engineer"
     system_prompt = h.load_system_prompt(module_name)
     ai = AI(system=system_prompt, model='gpt-4')
     print("\033[93mGenerating code...\033[00m")
+
     response, messages = ai.generate_response(prompt)
 
     logger.log_action(module_name, prompt, response, 'gpt-4')
 
     # Parse the chat and extract files
-    print("\033[95mExtracting code...\033[00m")
     files = h.parse_chat(response)
     
     # Save files to disk
@@ -86,12 +76,48 @@ def engineer(prompt):
     return response, messages
 
 def debugger(prompt):
+    module_name = "debugger"
+    system_prompt = h.load_system_prompt(module_name)
+    ai = AI(system=system_prompt, model='gpt-3.5-turbo-16k')
 
     # Run the requirements.txt file in generated_code folder with pip3
     print("\033[94mInstalling dependencies...\033[00m")
     os.system("pip3 install -r generated_code/requirements.txt")
     print("\033[92mDependencies Done!\033[00m")
 
-    # In a while loop, run main.py, and if it crashes, pass the full codebase to the debugger.
-    print("\033[91mRunning code...\033[00m")
-    os.system("python3 generated_code/main.py")
+    while True:
+        exit_code, error_msg = h.run_main()
+
+        # If exit code is 0, the process ran successfully
+        if exit_code == 0:
+            print("main.py ran successfully!")
+            break
+
+        # If there was an error
+        else:
+            print(f"Error encountered: {error_msg}")
+            print("\033[95mDebugging code...\033[00m")
+
+
+            prompt = prompt + "\n The error encountered is: \n" + error_msg
+
+
+            debug_response, messages = ai.generate_response(prompt)
+            logger.log_action(module_name, prompt, debug_response, 'gpt-4')
+
+            debugged_code = h.parse_chat(debug_response)
+            h.to_files(debugged_code)
+
+            # Check if requirements.txt is modified and reinstall the packages
+            if any("requirements.txt" in file_name for file_name, _ in debugged_code):
+                print("\033[94mReinstalling updated dependencies...\033[00m")
+                os.system("pip3 install -r generated_code/requirements.txt")
+                print("\033[92mUpdated dependencies installed!\033[00m")
+
+            print("\033[92mDebugger module has made an attempt to fix. Rerunning main.py...\033[00m")
+            # The loop will then repeat and try running main.py again
+
+    
+
+
+

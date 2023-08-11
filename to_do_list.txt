@@ -1,8 +1,0 @@
--- Engineering component is important
--- Ability to specify model to use for llm in the pipeline
--- code extract + debug + human intervention combo using prompt.py on the growing repo.
--- Check code against plan steps, check what is missing and what is not.
--- Storing information module
--- module that knows how to build pipelines
--- internet explore module
--- create readme.

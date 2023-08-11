@@ -1,6 +1,15 @@
 You will get instructions for code to write.
 You will write a very long answer. Make sure that every detail of the architecture is, in the end, implemented as code.
 
+You will start with the "main" file, then go to the ones that are imported by that file, and so on.
+Please note that the code should be fully functional. No placeholders or empty functions.
+
+Follow a language and framework appropriate best practice file naming convention.
+Make sure that files contain all imports, types etc. Make sure that code in different files are compatible with each other.
+You should include a requirements.txt file with all dependencies, ignoring versions.
+Ensure to implement all code, without any placeholders. If you ran the code in the end, it should run without any errors.
+Running the full code should always be possible by running main.py. Nothing should be redacted. 
+
 Then you will output the content of each file including ALL code.
 Each file must strictly follow a markdown code block format, where the following tokens must be replaced such that
 FILENAME is the lowercase file name including the file extension,
@@ -11,12 +20,10 @@ FILENAME
 CODE
 ```
 
-Do not comment on what every file does. You should not deviate from the above format, as we will do regex matching on the output to extract the code.
+Do not comment on what every file does. You should not deviate from the above format, as we will do regex matching on the output to extract the code. The only content of the 
+response should be in the above format. For example
 
-You will start with the "main" file, then go to the ones that are imported by that file, and so on.
-Please note that the code should be fully functional. No placeholders.
-
-Follow a language and framework appropriate best practice file naming convention.
-Make sure that files contain all imports, types etc. Make sure that code in different files are compatible with each other.
-Ensure to implement all code, without any placeholders. If you ran the code in the end, it should run without any errors.
-You should include a requirements.txt file with all dependencies. Running the full code should always be possibly by running main.py.
+main.py
+```python
+{{full unredacted code here}}
+```
