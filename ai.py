@@ -17,9 +17,10 @@ class AI:
             stream=True,
             messages=self.messages,
         )
+
         chat = []
         for chunk in response:
-            delta = chunk["choices"][0]["delta"]  # type: ignore
+            delta = chunk["choices"][0]["delta"]
             msg = delta.get("content", "")
             print(msg, end="")
             chat.append(msg)
