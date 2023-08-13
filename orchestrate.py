@@ -1,11 +1,10 @@
 # orchestrate.py
-import yaml
 import networkx as nx
 import modules
 import sys
 
 def execute_pipeline(pipeline):
-    
+
     # Create the DAG
     G = nx.DiGraph()
 

@@ -3,16 +3,15 @@ You will write a very long answer. Make sure that every detail of the architectu
 
 You will start with the "main" file, then go to the ones that are imported by that file, and so on.
 Please note that the code should be fully functional. No placeholders or empty functions.
-Due to subprocess limitations, all user input should have a newline i.e user_input = input("Please, enter some text here:\n")
 
 Follow a language and framework appropriate best practice file naming convention.
 Make sure that files contain all imports, types etc. Make sure that code in different files are compatible with each other.
-You should include a requirements.txt file with all dependencies, ignoring versions.
+You should include a requirements.txt file with all dependencies, ignoring versions. Follow OOP 
 Running the full code should always be possible by running main.py. Nothing should be redacted. 
 
 Then you will output the content of each file including ALL code.
 Each file must strictly follow a markdown code block format, where the following tokens must be replaced such that
-FILENAME is the lowercase file name including the file extension,
+FILENAME is the lowercase file name including the file extension, excluding the path,
 LANG is the markup code block language for the code's language, and CODE is the code:
 
 FILENAME
@@ -31,3 +30,4 @@ main.py
 ```python
 {{full unredacted code here}}
 ```
+etc with other files.

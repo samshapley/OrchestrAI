@@ -6,8 +6,6 @@ ignore = [
     'prompt.py',
     'roadmap.md',
     'README.md',
-    'ai.py',
-    'memory.py',
 ] 
 
 def get_current_dir():
@@ -18,8 +16,10 @@ def write_content(outfile, filepath, content):
     outfile.write(f"\n--- File Path: {filepath} ---\n")
     
     # Writing the cleaned contents of the file to the output file
-    outfile.write(content)
+    content_without_spaces = content.replace(' ', '')
+    outfile.write(content_without_spaces)
     outfile.write("\n")
+
 
 def process_file(filename, outfile):
     # Check if the file is in the ignore list

@@ -73,53 +73,68 @@ def engineer(prompt):
     # Save files to disk
     h.to_files(files)
     # Generate repo promtpt.
-    return response
 
-def debugger(prompt):
+    # Output of the module is a concatenated text of the codebase
+    codebase = h.extract_codebase('generated_code')
+    return codebase
+
+def debugger(codebase):
     module_name = "debugger"
     system_prompt = h.load_system_prompt(module_name)
     ai = AI(system=system_prompt, model='gpt-3.5-turbo-16k')
-
-    # Run the requirements.txt file in generated_code folder with pip3
-    print("\033[94mInstalling dependencies...\033[00m")
-    os.system("pip3 install -r generated_code/requirements.txt")
-    print("\033[92mDependencies Done!\033[00m")
-
+    
+    # Add a debug_attempt counter
+    debug_attempt = 0
+    
     while True:
         exit_code, error_msg = h.run_main()
-
+        
         # If exit code is 0, the process ran successfully
         if exit_code == 0:
             print("main.py ran successfully!")
             break
-
+        
         # If there was an error
         else:
             print(f"Error encountered: {error_msg}")
-            print("\033[95mDebugging code...\033[00m")
+            
+            # Check if we have made more than 3 debugging attempts
+            if debug_attempt >= 3:
+                print("\033[91mDebugging has taken more than 3 attempts.\033[00m")
+                print("1: Invoke human intervention")
+                print("2: End the pipeline early")
+                choice = input("Please select an option (1 or 2): ")
 
-
-            prompt = prompt + "\n The error encountered is: \n" + error_msg
-
-
-            debug_response, messages = ai.generate_response(prompt)
-            logger.log_action(module_name, prompt, debug_response, 'gpt-4')
-
-            debugged_code = h.parse_chat(debug_response)
-            h.to_files(debugged_code)
-            print("\033[92mCodebase updated!\033[00m")
-
-            # Check if requirements.txt is modified and reinstall the packages
-            if any("requirements.txt" in file_name for file_name, _ in debugged_code):
-                print("\033[94mReinstalling updated dependencies...\033[00m")
-                os.system("pip3 install -r generated_code/requirements.txt")
-                print("\033[92mUpdated dependencies installed!\033[00m")
-
-            print("\033[93mDebugger module has made an attempt to fix. Rerunning main.py...\033[00m")
-            # The loop will then repeat and try running main.py again
-
+                if choice == "1":
+                    print("Please provide input for human intervention:")
+                    human_input = input()
+                    prompt = codebase + "\n The error encountered is: \n" + error_msg + "\n Human Intervention: \n" + human_input
+                elif choice == "2":
+                    raise Exception("Auto Debugging Failed")
+                else:
+                    print("Invalid choice. Please try again.")
+                    continue
+                
+            else:
+                print("\033[95mDebugging code...\033[00m")
+                prompt = codebase + "\n The error encountered is: \n" + error_msg
+                debug_response, messages = ai.generate_response(prompt)
+                logger.log_action(module_name, prompt, debug_response, 'gpt-4')
+                debugged_code = h.parse_chat(debug_response)
+                h.to_files(debugged_code)
+                
+                if any("requirements.txt" in file_name for file_name, _ in debugged_code):
+                    print("\033[94mReinstalling updated dependencies...\033[00m")
+                    os.system("pip3 install -r generated_code/requirements.txt")
+                    print("\033[92mUpdated dependencies installed!\033[00m")
+                
+                print("\033[93mDebugger module has made an attempt to fix. Rerunning main.py...\033[00m")
+                
+                # Increment the debug_attempt counter
+                debug_attempt += 1
+                
+    # Output of the module is a concatenated text of the codebase
     codebase = h.extract_codebase('generated_code')
-
     return codebase
 
 def modify_codebase(codebase):
@@ -135,7 +150,7 @@ def modify_codebase(codebase):
         # If the user chooses 'y', proceed with the current modification logic
         print("\033[94mPlease specify how you want to modify the codebase:\033[00m")
         instructions = input()
-        
+
 
         # Add instructions to codebase
         codebase = codebase + "\n -- User Instructions --" + instructions
@@ -174,13 +189,6 @@ def create_readme(codebase):
     h.to_files([("README.md", response)])
 
     return response
-
-def retrieve_codebase():
-    """Extracts the codebase from the generated_code folder and returns it for use."""
-    module_name = "extract_codebase"
-    codebase = h.extract_codebase('generated_code')
-    logger.log_action(module_name, None, codebase, None)
-    return codebase
 
 
 

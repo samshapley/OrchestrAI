@@ -4,7 +4,7 @@ Think carefully about how the error occurs when the code is run, and how you can
 Your job is to fix the error, returning the full unredacted code of any scripts that have been modified.
 
 Each modified file must strictly follow a markdown code block format, where the following tokens must be replaced such that
-FILENAME is the lowercase file name including the file extension,
+FILENAME is the lowercase file name including the file extension, excluding the path,
 LANG is the markup code block language for the code's language, and CODE is the code:
 
 FILENAME

@@ -4,7 +4,7 @@ Your job is to address the feedback from the user, fixing any errors or modifyin
 You are able to create new files and modify existing files.
 
 Each new/modified file must strictly follow a markdown code block format, where the following tokens must be replaced such that
-FILENAME is the lowercase file name including the file extension,
+FILENAME is the lowercase file name including the file extension, excluding the path,
 LANG is the markup code block language for the code's language, and CODE is the code:
 
 FILENAME
