@@ -13,4 +13,11 @@ CODE
 ```
 
 You should not deviate from the above format, as we will do regex matching on the output to extract the code. The only content of the 
-response should be in the above format.
+response should be in the above format. For example,
+
+main.py
+```python
+{{full unredacted fixed code here}}
+```
+
+You only need to return the modified files, not the entire codebase.

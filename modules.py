@@ -5,20 +5,20 @@ import os
 from memory import Logger
 logger = Logger()
     
-def start_module(prompt):     
+def start_module(module_input):     
     print("\033[92mPlease specify the task you want to perform:\033[00m")
     start = input()
     logger.log_action("start", start, None, None)
 
-    return prompt + start, []
+    return module_input + start
 
-def human_intervention(prompt):
+def human_intervention(module_input):
     module_name = "human_intervention"
     print("Please provide additional information to guide the agent:")
     additional_info = input()
 
-    logger.log_action(module_name, prompt, None, None)
-    return prompt + additional_info, []
+    logger.log_action(module_name, module_input, None, None)
+    return module_input + additional_info
 
 def task_planner(prompt):
     module_name = "task_planner"
@@ -27,7 +27,7 @@ def task_planner(prompt):
     response, messages = ai.generate_response(prompt)
 
     logger.log_action(module_name, prompt, response, 'gpt-4')
-    return response, messages
+    return response
 
 def scrutinizer(prompt):
     module_name = "scrutinizer"
@@ -36,7 +36,7 @@ def scrutinizer(prompt):
     response, messages = ai.generate_response(prompt)
 
     logger.log_action(module_name, prompt, response, 'gpt-4')
-    return response, messages
+    return response
 
 def enhancer(prompt):
     module_name = "enhancer"
@@ -45,7 +45,7 @@ def enhancer(prompt):
     response, messages = ai.generate_response(prompt)
 
     logger.log_action(module_name, prompt, response, 'gpt-4')
-    return response, messages
+    return response
 
 def code_planner(prompt):
     module_name = "code_planner"
@@ -55,7 +55,7 @@ def code_planner(prompt):
     response, messages = ai.generate_response(prompt)
 
     logger.log_action(module_name, prompt, response, 'gpt-4')
-    return response, messages
+    return response
 
 def engineer(prompt):
     module_name = "engineer"
@@ -73,7 +73,7 @@ def engineer(prompt):
     # Save files to disk
     h.to_files(files)
     # Generate repo promtpt.
-    return response, messages
+    return response
 
 def debugger(prompt):
     module_name = "debugger"
@@ -107,6 +107,7 @@ def debugger(prompt):
 
             debugged_code = h.parse_chat(debug_response)
             h.to_files(debugged_code)
+            print("\033[92mCodebase updated!\033[00m")
 
             # Check if requirements.txt is modified and reinstall the packages
             if any("requirements.txt" in file_name for file_name, _ in debugged_code):
@@ -114,10 +115,72 @@ def debugger(prompt):
                 os.system("pip3 install -r generated_code/requirements.txt")
                 print("\033[92mUpdated dependencies installed!\033[00m")
 
-            print("\033[92mDebugger module has made an attempt to fix. Rerunning main.py...\033[00m")
+            print("\033[93mDebugger module has made an attempt to fix. Rerunning main.py...\033[00m")
             # The loop will then repeat and try running main.py again
 
-    
+    codebase = h.extract_codebase('generated_code')
+
+    return codebase
+
+def modify_codebase(codebase):
+    while True:
+        # Ask the user if they want to modify the codebase or provide feedback
+        print("\033[92mDo you want to modify the codebase or provide feedback? y/n:\033[00m")
+        choice = input().strip().lower()
+
+        # If the user chooses 'n', exit the loop and return the current state of the codebase
+        if choice == 'n':
+            break
+
+        # If the user chooses 'y', proceed with the current modification logic
+        print("\033[94mPlease specify how you want to modify the codebase:\033[00m")
+        instructions = input()
+        
+
+        # Add instructions to codebase
+        codebase = codebase + "\n -- User Instructions --" + instructions
+
+        module_name = "modify_codebase"
+        system_prompt = h.load_system_prompt(module_name)
+        ai = AI(system=system_prompt, model='gpt-4')
+        print("\033[93mModifying codebase...\033[00m")
+        response, messages = ai.generate_response(codebase)
+        logger.log_action(module_name, codebase, response, 'gpt-4')
+
+        # Parse the chat and extract files
+        files = h.parse_chat(response)
+        # Save the codebase.
+        h.to_files(files)
+
+        # Extract the updated codebase
+        updated_codebase = h.extract_codebase('generated_code')
+
+        # After modification, invoke the debugger module on the updated codebase
+        codebase = debugger(updated_codebase)
+
+    return codebase
+
+def create_readme(codebase):
+    module_name = "create_readme"
+    system_prompt = h.load_system_prompt(module_name)
+    ai = AI(system=system_prompt, model='gpt-4')
+
+    print("\033[93mGenerating README.md...\033[00m")
+    response, messages = ai.generate_response(codebase)
+
+    logger.log_action(module_name, codebase, response, 'gpt-4')
+
+    # Save the response to a README.md file in the generated_code folder
+    h.to_files([("README.md", response)])
+
+    return response
+
+def retrieve_codebase():
+    """Extracts the codebase from the generated_code folder and returns it for use."""
+    module_name = "extract_codebase"
+    codebase = h.extract_codebase('generated_code')
+    logger.log_action(module_name, None, codebase, None)
+    return codebase
 
 
 

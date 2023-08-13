@@ -20,4 +20,10 @@ pipeline:
     output_name: code
   - module: debugger
     inputs: [code]
-    output_name: debugged_code
+    output_name: working_codebase
+  - module: modify_codebase
+    inputs: [working_codebase]
+    output_name: modified_codebase
+  - module: create_readme
+    inputs: [modified_codebase]
+    output_name: readme

@@ -4,8 +4,10 @@ import json
 # Ignore list, a list of files to ignore if name matches
 ignore = [
     'prompt.py',
+    'roadmap.md',
     'README.md',
-    'roadmap.md'
+    'ai.py',
+    'memory.py',
 ] 
 
 def get_current_dir():
@@ -50,7 +52,6 @@ def main():
         # Add the chosen text string at the end
         chosen_text = "\nIf you understand, generate only YES."
         outfile.write(chosen_text)
-
 
 if __name__ == "__main__":
     main()
