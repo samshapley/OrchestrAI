@@ -103,10 +103,8 @@ def extract_codebase(directory='generated_code', ignore_list=[]):
                     # Read the contents of the file, remove line breaks and leading spaces
                     content = infile.read().replace('\n', '').replace('\r', '')
                     content = ' '.join(content.split())
-                    result_content.append(f"--- File Path: {filepath} ---\n{content}")
+                    result_content.append(f"--- File Name: {filename} ---\n{content}")
             except Exception:
                 pass
 
-    # Add the chosen text at the end
-    result_content.append("\nIf you understand, generate only YES.")
     return "\n".join(result_content)

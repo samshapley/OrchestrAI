@@ -1,5 +1,5 @@
 import openai
-openai.api_key = 'YOUR_API_KEY'
+openai.api_key = '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'
 import json
 
 class AI:

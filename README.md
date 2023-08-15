@@ -26,6 +26,7 @@ OrchestrAI requires the following files:
 - `ai.py` - Manages interactions with the OpenAI GPT-4 model. Set your OpenAI API key here.
 - `modules.py` - Contains available AI modules. 
 - `orchestrate.py` - Loads modules and pipelines, constructs a Directed Acyclic Graph (DAG) of operations, and executes them in the correct order.
+- `agent.py` - Run the script and the specified pipeline.
 - `helpers.py` - Provides helper functions, including loading system prompts, parsing chat data, and writing code files.
 - `pipeline.yml` - Describes the sequence of operations to be executed in your pipeline.
 
@@ -70,13 +71,13 @@ pipeline:
 
 ### Running the Script
 
-To run OrchestrAI, execute `orchestrate.py`:
+To run OrchestrAI, execute `agent.py`:
 
 ```bash
-python orchestrate.py
+python agent.py
 ```
 
-The script will execute the operations in the pipeline in the order specified, querying the GPT-4 model as necessary and storing the results.
+The script will execute the operations in the pipeline in the order specified, querying the GPT-4 model as necessary and storing the results. The 'orchestrate.py' script handles the pipeline and the execution order of the tasks and modules.
 
 ## Self-Debugging
 

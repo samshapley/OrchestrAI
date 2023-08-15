@@ -2,15 +2,15 @@ pipeline:
   - module: start_module
     inputs: []
     output_name: request
-  - module: task_planner
-    inputs: [request]
-    output_name: task_plan
-  - module: scrutinizer
-    inputs: [request, task_plan]
-    output_name: scrutinized_task_plan
-  - module: enhancer
-    inputs: [request, scrutinized_task_plan, task_plan]
-    output_name: enhanced_task_plan
+  # - module: task_planner
+  #   inputs: [request]
+  #   output_name: task_plan
+  # - module: scrutinizer
+  #   inputs: [request, task_plan]
+  #   output_name: scrutinized_task_plan
+  # - module: enhancer
+  #   inputs: [request, scrutinized_task_plan, task_plan]
+  #   output_name: enhanced_task_plan
   - module: code_planner
     inputs: [request]
     supplement: "Use only python."
