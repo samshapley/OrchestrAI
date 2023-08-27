@@ -2,10 +2,10 @@
 import networkx as nx
 import modules
 import sys
-import matplotlib.pyplot as plt
 import yaml
-import helpers as h
 import wandb
+import os
+
 # Load the configuration
 with open('config.yml', 'r') as f:
     config = yaml.safe_load(f)
@@ -13,8 +13,6 @@ with open('config.yml', 'r') as f:
 # Set the wandb_enabled flag
 wandb_enabled = config['wandb_enabled']
 
-
-import matplotlib.patches as mpatches
 
 def execute_pipeline(pipeline):
     
@@ -44,7 +42,7 @@ def execute_pipeline(pipeline):
       ascii_pipeline += "{} --> {} --> {}\n".format(inputs, module_name, output_name)
 
     print(ascii_pipeline)
-    h.visualize_pipeline(nx, G)
+    # h.visualize_pipeline(nx, G)
     # If wandb is enabled, log the pipeline
     if wandb_enabled:
         wandb.log({"pipeline": wandb.Image("pipeline.png")})
@@ -75,11 +73,14 @@ def execute_pipeline(pipeline):
       print(f"\033[91m{module_name.upper()}\033[00m")
 
       if hasattr(modules, module_name):
-        module_func = getattr(modules, module_name)
-        module_input = '\n'.join([data_dict.get(input, '') for input in operation['inputs']])
-        module_input += '\n Additional User Input' + supplement
-        module_output = module_func(module_input)
-        data_dict[output_name] = module_output
-
+          module_func = getattr(modules, module_name)
+      elif os.path.exists(f'system_prompts/{module_name}.txt'):
+          module_func = getattr(modules, 'chameleon')
       else:
-        print(f"Warning: No module function '{module_name}'. Ignoring.")
+          print(f"Warning: No module function '{module_name}' and no system prompt. Ignoring.")
+          continue
+
+      module_input = '\n'.join([data_dict.get(input, '') for input in operation['inputs']])
+      module_input += '\n Additional User Input' + supplement
+      module_output = module_func(module_input, module_name) if module_func.__name__ == 'chameleon' else module_func(module_input)
+      data_dict[output_name] = module_output

@@ -20,34 +20,17 @@ def human_intervention(module_input):
     logger.log_action(module_name, module_input, None, None)
     return module_input + additional_info
 
-def task_planner(prompt):
-    module_name = "task_planner"
+def chameleon(prompt, module_name):
+    """This function is used to invoke the chameleon module.
+    The orchestration is set up to invoke this model when:
+        1. A function specified in the pipeline does not exist.
+        2. A system prompt with a matching module name exists.
+
+    This is so all the user has to do is provide a system prompt for a module if it's a simple AI call module, 
+    and the orchestration will take care of the rest.
+    """
+
     ai = AI(module_name, model='gpt-4')
-    response, messages = ai.generate_response(prompt)
-
-    logger.log_action(module_name, prompt, response, 'gpt-4')
-    return response
-
-def scrutinizer(prompt):
-    module_name = "scrutinizer"
-    ai = AI(module_name, model='gpt-4')
-    response, messages = ai.generate_response(prompt)
-
-    logger.log_action(module_name, prompt, response, 'gpt-4')
-    return response
-
-def enhancer(prompt):
-    module_name = "enhancer"
-    ai = AI(module_name, model='gpt-4')
-    response, messages = ai.generate_response(prompt)
-
-    logger.log_action(module_name, prompt, response, 'gpt-4')
-    return response
-
-def code_planner(prompt):
-    module_name = "code_planner"
-    ai = AI(module_name, model='gpt-4')
-    print("\033[93mPlanning code...\033[00m")
     response, messages = ai.generate_response(prompt)
 
     logger.log_action(module_name, prompt, response, 'gpt-4')

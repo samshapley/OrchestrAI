@@ -18,7 +18,6 @@ with open('config.yml', 'r') as f:
 wandb_enabled = config['wandb_enabled']
 pipeline_path = "pipelines/" + config['pipeline'] + ".yml"
 
-
 if wandb_enabled:
     wandb.init(project="OrchestrAI")
     wandb.config.wandb_enabled = wandb_enabled
@@ -53,7 +52,7 @@ def main():
 
         root_span.add_child(globals.chain_span)
 
-    # Execute the pipeline
+    # agent.py
     try:
         execute_pipeline(pipeline)
     except Exception as e:
@@ -63,20 +62,12 @@ def main():
             # Log the root span to Weights & Biases
             agent_end_time_ms = round(datetime.datetime.now().timestamp() * 1000)
             root_span._span.end_time_ms = agent_end_time_ms
-
             root_span.log(name="pipeline_trace")
-            wandb.finish()
-    
-
             # Open and load the JSON file
-            with open('memory_log.json', 'r') as f:
-                data = json.load(f)
-
-            # Convert the JSON data to a pandas DataFrame
-            df = pd.DataFrame(data)
-
-            # Log the DataFrame to Weights & Biases
-            wandb.log({"memory_log": wandb.Table(dataframe=df)})
+            memory_df = pd.read_json('memory_log.json')
+            wandb.log({"memory_log": wandb.Table(dataframe=memory_df)}) # Log the DataFrame to Weights & Biases
+            wandb.finish()
+            print ("\033[98m Wandb logging completed.\033[00m")
             
         print("\033[95m ------- OrchestrAI finished  ------\033[00m")
 

@@ -1,3 +1,3 @@
-openai_api_key: 'OPENAI_API_KEY'
-wandb_enabled: false
-pipeline: "engineering_pipeline"
+openai_api_key: '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'
+wandb_enabled: true
+pipeline: "task_pipeline"
