@@ -7,7 +7,6 @@ import datetime
 from wandb.sdk.data_types.trace_tree import Trace
 import globals
 import yaml
-import json
 import pandas as pd
 
 # Load the configuration
@@ -16,7 +15,8 @@ with open('config.yml', 'r') as f:
 
 # Set the wandb_enabled flag
 wandb_enabled = config['wandb_enabled']
-pipeline_path = "pipelines/" + config['pipeline'] + ".yml"
+pipeline_name = config['pipeline'] 
+pipeline_path = "pipelines/" + pipeline_name + ".yml"
 
 if wandb_enabled:
     wandb.init(project="OrchestrAI")
@@ -29,7 +29,7 @@ def main():
     pipeline = h.load_pipeline(pipeline_path)
     
     # Get the name of the pipeline file
-    file_name = pipeline_path.split("/")[-1].split(".")[0]
+    pipeline_name = pipeline_path.split("/")[-1].split(".")[0]
 
 
     if wandb_enabled:
@@ -37,15 +37,15 @@ def main():
 
         # create a root span for the pipeline
         root_span = Trace(
-            name="Pipeline",
+            name="Agent",
             kind="agent",
             start_time_ms=globals.agent_start_time_ms,
-            metadata={"pipeline_name": file_name},
+            metadata={"pipeline_name": pipeline_name},
         )
 
         #The Agent calls into a LLMChain..
         globals.chain_span = Trace(
-            name="LLMChain",
+            name=pipeline_name,
             kind="chain",
             start_time_ms=globals.agent_start_time_ms,
         )
@@ -64,10 +64,10 @@ def main():
             root_span._span.end_time_ms = agent_end_time_ms
             root_span.log(name="pipeline_trace")
             # Open and load the JSON file
-            memory_df = pd.read_json('memory_log.json')
-            wandb.log({"memory_log": wandb.Table(dataframe=memory_df)}) # Log the DataFrame to Weights & Biases
-            wandb.finish()
-            print ("\033[98m Wandb logging completed.\033[00m")
+            # memory_df = pd.read_json('memory_log.json')
+            # wandb.log({"memory_log": wandb.Table(dataframe=memory_df)}) # Log the DataFrame to Weights & Biases
+            # wandb.finish()
+            # print ("\033[98m Wandb logging completed.\033[00m")
             
         print("\033[95m ------- OrchestrAI finished  ------\033[00m")
 

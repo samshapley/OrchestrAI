@@ -44,8 +44,8 @@ def execute_pipeline(pipeline):
     print(ascii_pipeline)
     # h.visualize_pipeline(nx, G)
     # If wandb is enabled, log the pipeline
-    if wandb_enabled:
-        wandb.log({"pipeline": wandb.Image("pipeline.png")})
+    # if wandb_enabled:
+    #     wandb.log({"pipeline": wandb.Image("pipeline.png")})
 
     # Now we use topological sort to get the execution order:
     try:

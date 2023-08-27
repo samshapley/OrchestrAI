@@ -71,7 +71,7 @@ class AI:
             runtime = llm_end_time_ms - globals.agent_start_time_ms
         # create a child span in wandb
             llm_span = Trace(
-                name="child_span",
+                name=self.module_name,
                 kind="llm",  # kind can be "llm", "chain", "agent" or "tool"
                 status_code=status_code,
                 status_message=status_message,
@@ -80,7 +80,7 @@ class AI:
                         "runtime_ms": runtime,
                         "module_name": self.module_name,
                         "model_name": self.model},
-                start_time_ms=globals.agent_start_time_ms,
+                start_time_ms=globals.chain_span._span.end_time_ms,
                 end_time_ms=llm_end_time_ms,
                 inputs={"system_prompt": self.system, "query": prompt},
                 outputs={"response": response_text}

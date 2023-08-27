@@ -8,7 +8,12 @@ CODE
 - Tracking token usage???? - just write about it 
 - Example pipelines
 - README reflective of the project, add demo video(s)
-
+-- remove additional user input issues
+-- reformat the system prompts.
+-- add ability to control temperature from pipeline (only if specified)
+-- add ability to add model name to pipeline (only if specified), else use default gpt-4
+- add a way for each module to automatically know what the original steps were. 
+--- add it so the module knows the pipeline steps that have been taken so far.
 -- add create pull request module with repositroy.
 
 REPORT
