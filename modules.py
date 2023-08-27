@@ -22,8 +22,7 @@ def human_intervention(module_input):
 
 def task_planner(prompt):
     module_name = "task_planner"
-    system_prompt = h.load_system_prompt(module_name)
-    ai = AI(system=system_prompt, model='gpt-4')
+    ai = AI(module_name, model='gpt-4')
     response, messages = ai.generate_response(prompt)
 
     logger.log_action(module_name, prompt, response, 'gpt-4')
@@ -31,8 +30,7 @@ def task_planner(prompt):
 
 def scrutinizer(prompt):
     module_name = "scrutinizer"
-    system_prompt = h.load_system_prompt(module_name)
-    ai = AI(system=system_prompt, model='gpt-4')
+    ai = AI(module_name, model='gpt-4')
     response, messages = ai.generate_response(prompt)
 
     logger.log_action(module_name, prompt, response, 'gpt-4')
@@ -40,8 +38,7 @@ def scrutinizer(prompt):
 
 def enhancer(prompt):
     module_name = "enhancer"
-    system_prompt = h.load_system_prompt(module_name)
-    ai = AI(system=system_prompt, model='gpt-4')
+    ai = AI(module_name, model='gpt-4')
     response, messages = ai.generate_response(prompt)
 
     logger.log_action(module_name, prompt, response, 'gpt-4')
@@ -49,8 +46,7 @@ def enhancer(prompt):
 
 def code_planner(prompt):
     module_name = "code_planner"
-    system_prompt = h.load_system_prompt(module_name)
-    ai = AI(system=system_prompt, model='gpt-4')
+    ai = AI(module_name, model='gpt-4')
     print("\033[93mPlanning code...\033[00m")
     response, messages = ai.generate_response(prompt)
 
@@ -59,8 +55,7 @@ def code_planner(prompt):
 
 def engineer(prompt):
     module_name = "engineer"
-    system_prompt = h.load_system_prompt(module_name)
-    ai = AI(system=system_prompt, model='gpt-4')
+    ai = AI(module_name, model='gpt-4')
     print("\033[93mGenerating code...\033[00m")
 
     response, messages = ai.generate_response(prompt)
@@ -80,11 +75,11 @@ def engineer(prompt):
 
 def debugger(codebase):
     module_name = "debugger"
-    system_prompt = h.load_system_prompt(module_name)
-    ai = AI(system=system_prompt, model='gpt-3.5-turbo-16k')
     
     # Add a debug_attempt counter
     debug_attempt = 0
+    max_attempts = 3
+    attempts_left = max_attempts
     
     while True:
         exit_code, error_msg = h.run_main()
@@ -99,25 +94,29 @@ def debugger(codebase):
             print(f"Error encountered: {error_msg}")
             
             # Check if we have made more than 3 debugging attempts
-            if debug_attempt >= 3:
+            if debug_attempt >= max_attempts:
                 print("\033[91mDebugging has taken more than 3 attempts.\033[00m")
                 print("1: Invoke human intervention")
-                print("2: End the pipeline early")
+                print("2: End debugging and move to next module")
                 choice = input("Please select an option (1 or 2): ")
-
+                
                 if choice == "1":
+                    debug_attempt = 0
+                    attempts_left = max_attempts
                     print("Please provide input for human intervention:")
                     human_input = input()
                     prompt = codebase + "\n The error encountered is: \n" + error_msg + "\n Human Intervention: \n" + human_input
                 elif choice == "2":
-                    raise Exception("Auto Debugging Failed")
+                    break # End debugging and move to next module
                 else:
                     print("Invalid choice. Please try again.")
                     continue
-                
+            
             else:
-                print("\033[95mDebugging code...\033[00m")
+                print("\033[95mDebugging codebase...\033[00m")
+                print(f"\033[96m{attempts_left} attempts left\033[00m")
                 prompt = codebase + "\n The error encountered is: \n" + error_msg
+                ai = AI(module_name, model='gpt-3.5-turbo-16k')
                 debug_response, messages = ai.generate_response(prompt)
                 logger.log_action(module_name, prompt, debug_response, 'gpt-4')
                 debugged_code = h.parse_chat(debug_response)
@@ -132,12 +131,14 @@ def debugger(codebase):
                 
                 # Increment the debug_attempt counter
                 debug_attempt += 1
-                
+                attempts_left -= 1
+    
     # Output of the module is a concatenated text of the codebase
     codebase = h.extract_codebase('generated_code')
     return codebase
 
 def modify_codebase(codebase):
+    module_name = "modify_codebase"
     while True:
         # Ask the user if they want to modify the codebase or provide feedback
         print("\033[92mDo you want to modify the codebase or provide feedback? y/n:\033[00m")
@@ -155,9 +156,7 @@ def modify_codebase(codebase):
         # Add instructions to codebase
         codebase = codebase + "\n -- User Instructions --" + instructions
 
-        module_name = "modify_codebase"
-        system_prompt = h.load_system_prompt(module_name)
-        ai = AI(system=system_prompt, model='gpt-4')
+        ai = AI(module_name, model='gpt-4')
         print("\033[93mModifying codebase...\033[00m")
         response, messages = ai.generate_response(codebase)
         logger.log_action(module_name, codebase, response, 'gpt-4')
@@ -177,8 +176,7 @@ def modify_codebase(codebase):
 
 def create_readme(codebase):
     module_name = "create_readme"
-    system_prompt = h.load_system_prompt(module_name)
-    ai = AI(system=system_prompt, model='gpt-4')
+    ai = AI(module_name, model='gpt-4')
 
     print("\033[93mGenerating README.md...\033[00m")
     response, messages = ai.generate_response(codebase)

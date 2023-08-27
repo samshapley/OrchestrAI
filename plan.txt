@@ -1,0 +1,24 @@
+#### Here are the remaining things I need to do to finalise the project:
+
+CODE
+
+- Add the Weights and Biases logging and or prompts logging to track token usage. DONE
+- Fix the debugging so human input actually works. 
+- Generate pipeline visualisation which I can log to wandb. DONE???
+- Tracking token usage???? - just write about it 
+- Example pipelines
+- README reflective of the project, add demo video(s)
+
+-- add create pull request module with repositroy.
+
+REPORT
+
+- Add a cool gif at the beginning
+- Discuss cost.
+- Finish the article.
+--- talk about the fact the modular system means easy to construct and maintain.
+--- decomposable parts means less memory problems.
+--- pipeline means you can start from an exisiting repository.
+--- self building options.
+--- write the Future section.
+--- Add references to article

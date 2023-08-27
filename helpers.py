@@ -3,6 +3,7 @@ import re
 import subprocess
 import sys
 import yaml
+import matplotlib.pyplot as plt
 
 def load_pipeline(file_path):
     """Load a pipeline configuration from a YAML file."""
@@ -108,3 +109,25 @@ def extract_codebase(directory='generated_code', ignore_list=[]):
                 pass
 
     return "\n".join(result_content)
+
+def visualize_pipeline(nx, G):
+    # Increase distance between nodes by setting k parameter
+    pos = nx.spring_layout(G, seed=42, k=2)  
+    
+    # Get module names as labels
+    labels = nx.get_node_attributes(G, 'module')  
+    
+    # Draw the nodes
+    nx.draw_networkx_nodes(G, pos, node_color='skyblue', node_size=300)
+    
+    # Draw the edges with arrows
+    nx.draw_networkx_edges(G, pos, arrowstyle="->", arrowsize=10, edge_color="gray")
+    
+    # Draw the labels for the nodes with reduced font size
+    nx.draw_networkx_labels(G, pos, labels, font_size=8)
+    
+    # Draw the labels for the edges with reduced font size
+    edge_labels = nx.get_edge_attributes(G, 'label')
+    nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels, font_size=6)
+    
+    plt.savefig("pipeline.png", dpi=300, bbox_inches='tight')

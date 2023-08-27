@@ -2,9 +2,22 @@
 import networkx as nx
 import modules
 import sys
+import matplotlib.pyplot as plt
+import yaml
+import helpers as h
+import wandb
+# Load the configuration
+with open('config.yml', 'r') as f:
+    config = yaml.safe_load(f)
+
+# Set the wandb_enabled flag
+wandb_enabled = config['wandb_enabled']
+
+
+import matplotlib.patches as mpatches
 
 def execute_pipeline(pipeline):
-
+    
     # Create the DAG
     G = nx.DiGraph()
 
@@ -21,16 +34,20 @@ def execute_pipeline(pipeline):
       supplement = operation.get('supplement', '')
 
       # Add node for this operation's output if it doesn't already exist
-      G.add_node(output_name)
+      G.add_node(output_name, module=module_name)
 
       # Add edges for inputs
       for i in inputs:
-        G.add_edge(i, output_name)
+        G.add_edge(i, output_name, label=i)
 
       # Add this operation to our ASCII pipeline representation
       ascii_pipeline += "{} --> {} --> {}\n".format(inputs, module_name, output_name)
 
     print(ascii_pipeline)
+    h.visualize_pipeline(nx, G)
+    # If wandb is enabled, log the pipeline
+    if wandb_enabled:
+        wandb.log({"pipeline": wandb.Image("pipeline.png")})
 
     # Now we use topological sort to get the execution order:
     try:
@@ -63,5 +80,6 @@ def execute_pipeline(pipeline):
         module_input += '\n Additional User Input' + supplement
         module_output = module_func(module_input)
         data_dict[output_name] = module_output
+
       else:
         print(f"Warning: No module function '{module_name}'. Ignoring.")
