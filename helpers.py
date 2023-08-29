@@ -21,7 +21,7 @@ def load_system_prompt(module_name):
     with open(f'system_prompts/{module_name}.txt', 'r') as file:
         module_prompt = file.read().replace('\n', '')
 
-    system_prompt = system_prompt + '\n' + module_name.upper() + '\n' +  module_prompt + '\n'
+    system_prompt = system_prompt + '\n\n --- ' + module_name.upper() + ' ---\n\n' +  module_prompt + '\n'
     return system_prompt
 
 def parse_chat(chat):
@@ -131,3 +131,8 @@ def visualize_pipeline(nx, G):
     nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels, font_size=6)
     
     plt.savefig("pipeline.png", dpi=300, bbox_inches='tight')
+
+def list_dependencies():
+    with open('generated_code/requirements.txt', 'r') as f:
+        dependencies = f.read().splitlines()
+    return dependencies

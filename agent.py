@@ -8,6 +8,7 @@ from wandb.sdk.data_types.trace_tree import Trace
 import globals
 import yaml
 import pandas as pd
+import atexit
 
 # Load the configuration
 with open('config.yml', 'r') as f:
@@ -51,6 +52,16 @@ def main():
         )
 
         root_span.add_child(globals.chain_span)
+
+        ## Just in case it crashes, we want to log the root span
+        def log_to_wandb():
+            # Log the root span to Weights & Biases
+            agent_end_time_ms = round(datetime.datetime.now().timestamp() * 1000)
+            root_span._span.end_time_ms = agent_end_time_ms
+            root_span.log(name="pipeline_trace")
+
+        # Register the function to be called on exit
+        atexit.register(log_to_wandb)
 
     # agent.py
     try:

@@ -7,10 +7,10 @@ pipeline:
     supplement: "Use only python."
     output_name: code_plan
   - module: engineer
-    inputs: [code_plan]
+    inputs: [request, code_plan]
     output_name: code
   - module: debugger
-    inputs: [code]
+    inputs: [request, code]
     output_name: working_codebase
   - module: modify_codebase
     inputs: [working_codebase]

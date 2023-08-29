@@ -20,4 +20,5 @@ filename.py
 {{full unredacted modified code here}}
 ```
 
-You only need to return the modified files or new files, not the entire codebase. 
+You only need to return the modified files or new files, not the entire codebase.
+All code should run and be unredacted.

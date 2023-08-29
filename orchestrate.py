@@ -3,7 +3,6 @@ import networkx as nx
 import modules
 import sys
 import yaml
-import wandb
 import os
 
 # Load the configuration
@@ -80,7 +79,10 @@ def execute_pipeline(pipeline):
           print(f"Warning: No module function '{module_name}' and no system prompt. Ignoring.")
           continue
 
-      module_input = '\n'.join([data_dict.get(input, '') for input in operation['inputs']])
-      module_input += '\n Additional User Input' + supplement
+      module_input = '\n'.join([input.upper() + ': ' + data_dict.get(input, '') for input in operation['inputs']])
+      
+      if supplement:
+         module_input += '\n Supplementary Information: ' + supplement
+
       module_output = module_func(module_input, module_name) if module_func.__name__ == 'chameleon' else module_func(module_input)
       data_dict[output_name] = module_output

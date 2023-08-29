@@ -2,28 +2,41 @@
 
 CODE
 
-- Add the Weights and Biases logging and or prompts logging to track token usage. DONE
-- Fix the debugging so human input actually works. 
-- Generate pipeline visualisation which I can log to wandb. DONE???
-- Tracking token usage???? - just write about it 
-- Example pipelines
-- README reflective of the project, add demo video(s)
--- remove additional user input issues
--- reformat the system prompts.
--- add ability to control temperature from pipeline (only if specified)
--- add ability to add model name to pipeline (only if specified), else use default gpt-4
-- add a way for each module to automatically know what the original steps were. 
---- add it so the module knows the pipeline steps that have been taken so far.
--- add create pull request module with repositroy.
+# Wandb logging
 
-REPORT
+- Add wandb logging to the pipeline. DONE
+- Fix the fact that the table logging breaks the pipeline logging. 
+- Generate pipeline visualisation which I can log to wandb. DONE???
+
+# General cleanup
+
+- Fix the debugging so human input actually works. 
+- Add more comments and docstrings.
+- Example pipelines
+- Fix realist issues.
+- Issues with structuring of system prompt. Additional user input issues.
+- Each module should have the the original query specified separately in system prompt. DONE
+- Control temperature from pipeline file (only if specified).
+- Control model used from pipeline file (only if specified, else use default gpt-4).
+- Create pull request in new repository, make this work.
+
+# Documentation
+
+- README reflective of the project, section for pre-built pipelines vs how to build your own.
+- Demo video(s) and gifs.
+- Example pipeline creation.
+- Tracking token usage???? - just write about it 
+- Update requirements.txt
+
+
+# Report
 
 - Add a cool gif at the beginning
 - Discuss cost.
 - Finish the article.
---- talk about the fact the modular system means easy to construct and maintain.
---- decomposable parts means less memory problems.
---- pipeline means you can start from an exisiting repository.
---- self building options.
---- write the Future section.
---- Add references to article
+- talk about the fact the modular system means easy to construct and maintain.
+- decomposable parts means less memory problems.
+- pipeline means you can start from an exisiting repository.
+- self building options.
+- write the Future section.
+- Add references to article

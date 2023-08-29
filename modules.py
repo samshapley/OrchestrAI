@@ -1,11 +1,14 @@
 # modules.py
+import os
+import yaml
 import helpers as h
 from ai import AI
-import os
 from memory import Logger
 logger = Logger()
-    
-def start_module(module_input):     
+
+
+def start_module(module_input):    
+    """This function is used to invoke the start module, to accept user input into the pipeline""" 
     print("\033[92mPlease specify the task you want to perform:\033[00m")
     start = input()
     logger.log_action("start", start, None, None)
@@ -37,6 +40,10 @@ def chameleon(prompt, module_name):
     return response
 
 def engineer(prompt):
+    """This function is used to invoke the engineer module.
+    The generated code is extracted from the response and
+    saved to the generated_code folder."""
+
     module_name = "engineer"
     ai = AI(module_name, model='gpt-4')
     print("\033[93mGenerating code...\033[00m")
@@ -63,6 +70,12 @@ def debugger(codebase):
     debug_attempt = 0
     max_attempts = 3
     attempts_left = max_attempts
+
+        # Install dependencies before starting the debugging process
+    print("\033[94mInstalling dependencies...\033[00m")
+    print(h.list_dependencies())
+    os.system("pip3 install -r generated_code/requirements.txt")
+    print("\033[92mDependencies installed!\033[00m")
     
     while True:
         exit_code, error_msg = h.run_main()
@@ -146,6 +159,7 @@ def modify_codebase(codebase):
 
         # Parse the chat and extract files
         files = h.parse_chat(response)
+
         # Save the codebase.
         h.to_files(files)
 
@@ -170,6 +184,3 @@ def create_readme(codebase):
     h.to_files([("README.md", response)])
 
     return response
-
-
-
