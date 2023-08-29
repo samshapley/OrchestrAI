@@ -6,6 +6,9 @@ pipeline:
     inputs: [request]
     output_name: task_plan
   - module: scrutinizer
+    model_config:
+      model: 'gpt-3.5-turbo'
+      temperature: 0.7
     inputs: [request, task_plan]
     output_name: scrutinized_task_plan
   - module: enhancer
@@ -17,4 +20,11 @@ pipeline:
   - module: enhancer
     inputs: [request, realistic_grounding, enhanced_task_plan]
     output_name: final_plan 
+  - module: markdown_converter
+    model_config:
+      model: 'gpt-3.5-turbo'
+      temperature: 0.7
+    inputs: [final_plan]
+    output_name: markdown_plan
+
 

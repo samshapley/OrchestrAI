@@ -41,6 +41,7 @@ def main():
             name="Agent",
             kind="agent",
             start_time_ms=globals.agent_start_time_ms,
+            end_time_ms=globals.agent_start_time_ms,
             metadata={"pipeline_name": pipeline_name},
         )
 
@@ -49,12 +50,17 @@ def main():
             name=pipeline_name,
             kind="chain",
             start_time_ms=globals.agent_start_time_ms,
+            end_time_ms=globals.agent_start_time_ms,
         )
 
         root_span.add_child(globals.chain_span)
 
         ## Just in case it crashes, we want to log the root span
         def log_to_wandb():
+            # Check if wandb.run is None
+            if wandb.run is None:
+                return
+
             # Log the root span to Weights & Biases
             agent_end_time_ms = round(datetime.datetime.now().timestamp() * 1000)
             root_span._span.end_time_ms = agent_end_time_ms
@@ -74,11 +80,9 @@ def main():
             agent_end_time_ms = round(datetime.datetime.now().timestamp() * 1000)
             root_span._span.end_time_ms = agent_end_time_ms
             root_span.log(name="pipeline_trace")
-            # Open and load the JSON file
-            # memory_df = pd.read_json('memory_log.json')
-            # wandb.log({"memory_log": wandb.Table(dataframe=memory_df)}) # Log the DataFrame to Weights & Biases
-            # wandb.finish()
-            # print ("\033[98m Wandb logging completed.\033[00m")
+
+            wandb.finish()
+            print ("\033[93m Wandb logging completed.\033[00m")
             
         print("\033[95m ------- OrchestrAI finished  ------\033[00m")
 

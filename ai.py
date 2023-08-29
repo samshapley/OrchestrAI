@@ -5,9 +5,14 @@ import yaml
 with open('config.yml', 'r') as f:
     config = yaml.safe_load(f)
 
-# Set the wandb_enabled flag
-wandb_enabled = config['wandb_enabled']
 openai.api_key = config['openai_api_key']
+
+default_model = config['default_model']
+default_temperature = config['default_temperature']
+default_top_p = config['default_top_p']
+default_max_tokens = config['default_max_tokens']
+default_frequency_penalty = config['default_frequency_penalty']
+default_presence_penalty = config['default_presence_penalty']
 
 # Check if the API key works
 try:
@@ -22,10 +27,14 @@ import globals
 import yaml
 
 class AI:
-    def __init__(self, module_name, model = 'gpt-4', temperature=0.7, openai=openai):
-        self.model = model
+    def __init__(self, module_name, model_config=None, openai=openai):
         self.openai = openai
-        self.temperature = temperature
+        self.model = model_config.get('model', default_model) if model_config else default_model
+        self.temperature = model_config.get('temperature', default_temperature) if model_config else default_temperature
+        self.top_p = model_config.get('top_p', default_top_p) if model_config else default_top_p
+        self.max_tokens = model_config.get('max_tokens', default_max_tokens) if model_config else default_max_tokens
+        self.frequency_penalty = model_config.get('frequency_penalty', default_frequency_penalty) if model_config else default_frequency_penalty
+        self.presence_penalty = model_config.get('presence_penalty', default_presence_penalty) if model_config else default_presence_penalty
         self.module_name = module_name
         self.system = h.load_system_prompt(module_name)
         self.messages = [{"role": "system", "content": self.system}]
@@ -33,6 +42,9 @@ class AI:
 
     def generate_response(self, prompt):
         self.messages.append({"role": "user", "content": prompt})
+        # Start time
+        llm_start_time_ms = round(datetime.datetime.now().timestamp() * 1000)  
+        token_count = 0  
 
         try:
             response = self.openai.ChatCompletion.create(
@@ -40,6 +52,10 @@ class AI:
                 stream=True,
                 messages=self.messages,
                 temperature=self.temperature,
+                max_tokens=self.max_tokens,
+                top_p=self.top_p,
+                frequency_penalty=self.frequency_penalty,
+                presence_penalty=self.presence_penalty,
             )
 
             chat = []
@@ -66,39 +82,17 @@ class AI:
             response_text = ""
             token_usage = {}
 
-        if wandb_enabled:
-            # calculate the runtime of the LLM
-            runtime = llm_end_time_ms - globals.agent_start_time_ms
-        # create a child span in wandb
-            llm_span = Trace(
-                name=self.module_name,
-                kind="llm",  # kind can be "llm", "chain", "agent" or "tool"
-                status_code=status_code,
-                status_message=status_message,
-                metadata={"temperature": self.temperature,
-                        "token_usage": token_usage,
-                        "runtime_ms": runtime,
-                        "module_name": self.module_name,
-                        "model_name": self.model},
-                start_time_ms=globals.chain_span._span.end_time_ms,
-                end_time_ms=llm_end_time_ms,
-                inputs={"system_prompt": self.system, "query": prompt},
-                outputs={"response": response_text}
-            )
-
-            # add the child span to the root span
-            globals.chain_span.add_child(llm_span)
-
-            # update the end time of the Chain span
-            globals.chain_span.add_inputs_and_outputs(
-                inputs={"query": prompt},
-                outputs={"response": response_text})
-
-            # update the Chain span's end time
-            globals.chain_span._span.end_time_ms = llm_end_time_ms
-
-            # log the child span to wandb
-            llm_span.log(name="pipeline_trace")
-        
+                
         self.messages.append({"role": "assistant", "content": response_text})
-        return response_text, self.messages
+
+        return {
+        "response_text": response_text,
+        "messages": self.messages,
+        "llm_end_time_ms": llm_end_time_ms,
+        "llm_start_time_ms": llm_start_time_ms,
+        "token_count": token_count,
+        "status_code": status_code,
+        "status_message": status_message,
+        "system_prompt": self.system,
+        "prompt": prompt
+        }

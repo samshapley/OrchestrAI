@@ -29,6 +29,7 @@ def execute_pipeline(pipeline):
       output_name = operation['output_name']
       inputs = operation['inputs']
       supplement = operation.get('supplement', '')
+      model_config = operation.get('model_config', None)
 
       # Add node for this operation's output if it doesn't already exist
       G.add_node(output_name, module=module_name)
@@ -76,13 +77,13 @@ def execute_pipeline(pipeline):
       elif os.path.exists(f'system_prompts/{module_name}.txt'):
           module_func = getattr(modules, 'chameleon')
       else:
-          print(f"Warning: No module function '{module_name}' and no system prompt. Ignoring.")
-          continue
+          Exception(f"Warning: No module function '{module_name}' and no system prompt. Invalid pipeline.")
+
 
       module_input = '\n'.join([input.upper() + ': ' + data_dict.get(input, '') for input in operation['inputs']])
-      
+
       if supplement:
          module_input += '\n Supplementary Information: ' + supplement
 
-      module_output = module_func(module_input, module_name) if module_func.__name__ == 'chameleon' else module_func(module_input)
+      module_output = module_func(module_input, module_name, model_config) if module_func.__name__ == 'chameleon' else module_func(module_input, model_config)
       data_dict[output_name] = module_output

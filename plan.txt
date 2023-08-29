@@ -11,14 +11,13 @@ CODE
 # General cleanup
 
 - Fix the debugging so human input actually works. 
-- Add more comments and docstrings.
-- Example pipelines
-- Fix realist issues.
-- Issues with structuring of system prompt. Additional user input issues.
+- Add more comments and docstrings, make sure everything is clear.
+- Example pipelines  -- almost there
+- Fix realist issues. DONE 
+- Issues with structuring of system prompt. Additional user input issues. DONE 
 - Each module should have the the original query specified separately in system prompt. DONE
-- Control temperature from pipeline file (only if specified).
-- Control model used from pipeline file (only if specified, else use default gpt-4).
-- Create pull request in new repository, make this work.
+- Control temperature from pipeline file (only if specified). DONE
+- Control model used from pipeline file (only if specified, else use default gpt-4). DONE
 
 # Documentation
 

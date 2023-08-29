@@ -3,7 +3,11 @@ pipeline:
     inputs: []
     output_name: request
   - module: translator
+    model_config:
+      model: 'gpt-3.5-turbo'
+      temperature: 0.2
     inputs: [request]
     supplement: "Spanish"
     output_name: translation
+
 

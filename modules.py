@@ -3,27 +3,51 @@ import os
 import yaml
 import helpers as h
 from ai import AI
-from memory import Logger
-logger = Logger()
+import wandb_logging as wb
+import globals
+
+# Load the configuration
+with open('config.yml', 'r') as f:
+    config = yaml.safe_load(f)
+
+# Set the wandb_enabled flag
+wandb_enabled = config['wandb_enabled']
 
 
-def start_module(module_input):    
+def start_module(module_input, dummy=None):   
     """This function is used to invoke the start module, to accept user input into the pipeline""" 
+    module_name = "start_module"
     print("\033[92mPlease specify the task you want to perform:\033[00m")
     start = input()
-    logger.log_action("start", start, None, None)
 
-    return module_input + start
+    output = module_input + start
 
-def human_intervention(module_input):
+    if wandb_enabled:
+        wb.log_tool(tool_name = module_name,
+                    inputs    = {},
+                    outputs   = {"original_input": output},
+                    parent    = globals.chain_span,
+                    status    = "success")
+
+    return output
+
+def human_intervention(module_input, dummy=None):
     module_name = "human_intervention"
     print("Please provide additional information to guide the agent:")
     additional_info = input()
 
-    logger.log_action(module_name, module_input, None, None)
-    return module_input + additional_info
+    output = module_input + additional_info
 
-def chameleon(prompt, module_name):
+    if wandb_enabled:
+        wb.log_tool(tool_name = module_name,
+                    inputs    = {},
+                    outputs   = {"human_intervention": output},
+                    parent    = globals.chain_span,
+                    status    = "success")
+
+    return output
+
+def chameleon(prompt, module_name, model_config=None):
     """This function is used to invoke the chameleon module.
     The orchestration is set up to invoke this model when:
         1. A function specified in the pipeline does not exist.
@@ -32,28 +56,32 @@ def chameleon(prompt, module_name):
     This is so all the user has to do is provide a system prompt for a module if it's a simple AI call module, 
     and the orchestration will take care of the rest.
     """
+    ai = AI(module_name, model_config=model_config)
+    response = ai.generate_response(prompt)
 
-    ai = AI(module_name, model='gpt-4')
-    response, messages = ai.generate_response(prompt)
+    if wandb_enabled:
+        wb.log_llm(response, module_name, ai.model, ai.temperature, parent = globals.chain_span)
 
-    logger.log_action(module_name, prompt, response, 'gpt-4')
-    return response
+    return response["response_text"]
 
-def engineer(prompt):
+def engineer(prompt, model_config=None):
     """This function is used to invoke the engineer module.
     The generated code is extracted from the response and
     saved to the generated_code folder."""
 
     module_name = "engineer"
-    ai = AI(module_name, model='gpt-4')
+    ai = AI(module_name, model_config=model_config)
     print("\033[93mGenerating code...\033[00m")
 
-    response, messages = ai.generate_response(prompt)
+    response = ai.generate_response(prompt)
 
-    logger.log_action(module_name, prompt, response, 'gpt-4')
+    if wandb_enabled:
+        wb.log_llm(response, module_name, ai.model, ai.temperature, parent = globals.chain_span)
+
+    response_text = response["response_text"]
 
     # Parse the chat and extract files
-    files = h.parse_chat(response)
+    files = h.parse_chat(response_text)
     
     # Save files to disk
     h.to_files(files)
@@ -63,7 +91,7 @@ def engineer(prompt):
     codebase = h.extract_codebase('generated_code')
     return codebase
 
-def debugger(codebase):
+def debugger(codebase, model_config=None):
     module_name = "debugger"
     
     # Add a debug_attempt counter
@@ -112,10 +140,14 @@ def debugger(codebase):
                 print("\033[95mDebugging codebase...\033[00m")
                 print(f"\033[96m{attempts_left} attempts left\033[00m")
                 prompt = codebase + "\n The error encountered is: \n" + error_msg
-                ai = AI(module_name, model='gpt-3.5-turbo-16k')
-                debug_response, messages = ai.generate_response(prompt)
-                logger.log_action(module_name, prompt, debug_response, 'gpt-4')
-                debugged_code = h.parse_chat(debug_response)
+                ai = AI(module_name, model_config=model_config)
+                debug_response = ai.generate_response(prompt)
+
+                if wandb_enabled:
+                    wb.log_llm(debug_response, module_name, ai.model, ai.temperature, parent = globals.chain_span)
+
+                debugged_code = h.parse_chat(debug_response["response_text"])
+
                 h.to_files(debugged_code)
                 
                 if any("requirements.txt" in file_name for file_name, _ in debugged_code):
@@ -133,7 +165,7 @@ def debugger(codebase):
     codebase = h.extract_codebase('generated_code')
     return codebase
 
-def modify_codebase(codebase):
+def modify_codebase(codebase, model_config=None):
     module_name = "modify_codebase"
     while True:
         # Ask the user if they want to modify the codebase or provide feedback
@@ -148,17 +180,18 @@ def modify_codebase(codebase):
         print("\033[94mPlease specify how you want to modify the codebase:\033[00m")
         instructions = input()
 
-
         # Add instructions to codebase
         codebase = codebase + "\n -- User Instructions --" + instructions
 
-        ai = AI(module_name, model='gpt-4')
+        ai = AI(module_name, model_config=model_config)
         print("\033[93mModifying codebase...\033[00m")
-        response, messages = ai.generate_response(codebase)
-        logger.log_action(module_name, codebase, response, 'gpt-4')
+        response = ai.generate_response(codebase)
+
+        if wandb_enabled:
+            wb.log_llm(response, module_name, ai.model, ai.temperature, parent = globals.chain_span)
 
         # Parse the chat and extract files
-        files = h.parse_chat(response)
+        files = h.parse_chat(response["response_text"])
 
         # Save the codebase.
         h.to_files(files)
@@ -171,16 +204,17 @@ def modify_codebase(codebase):
 
     return codebase
 
-def create_readme(codebase):
+def create_readme(codebase, model_config=None):
     module_name = "create_readme"
-    ai = AI(module_name, model='gpt-4')
+    ai = AI(module_name, model_config=model_config)
 
     print("\033[93mGenerating README.md...\033[00m")
-    response, messages = ai.generate_response(codebase)
+    response = ai.generate_response(codebase)
 
-    logger.log_action(module_name, codebase, response, 'gpt-4')
+    if wandb_enabled:
+        wb.log_llm(response, module_name, ai.model, ai.temperature, parent = globals.chain_span)
 
     # Save the response to a README.md file in the generated_code folder
-    h.to_files([("README.md", response)])
+    h.to_files([("README.md", response["response_text"])])
 
     return response
