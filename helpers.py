@@ -4,6 +4,7 @@ import subprocess
 import sys
 import yaml
 import matplotlib.pyplot as plt
+import shutil
 
 def load_pipeline(file_path):
     """Load a pipeline configuration from a YAML file."""
@@ -72,8 +73,14 @@ def run_main():
     # stdout=None ensures the standard output (e.g., print statements, prompts for input) 
     # of the script is directly displayed in real-time on the terminal.
     # stderr=subprocess.PIPE captures the error stream of the script, which can be later accessed.
+        # Check if 'python3' is available in PATH
+    if shutil.which('python3') is not None:
+        python_command = 'python3'
+    else:
+        python_command = 'python'
+
     process = subprocess.Popen(
-        ["python", "generated_code/main.py"],
+        [python_command, "generated_code/main.py"],
         text=True,
         bufsize=1,
         stdout=sys.stdout,  # Connect subprocess's stdout directly to the terminal

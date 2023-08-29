@@ -1,16 +1,18 @@
 ### OpenAI Key
-openai_api_key: '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'
+openai_api_key: 'YOUR_API_KEY_HERE'
 
 ### OpenAI Default Configs ###
 ### All calls to OpenAI will use these configs unless otherwise specified ###
 
-default_model: 'gpt-3.5-turbo' # Recommended to set to a cheap model for testing
+default_model: 'gpt-4' # Recommended to set to a cheaper model for testing.
 default_temperature: 1
 default_max_tokens: Null
 default_top_p: 1
 default_frequency_penalty: 0
 default_presence_penalty: 0
 
-### Pipeline Configs ###
+### Logging ###
 wandb_enabled: false
+
+### Pipeline ###
 pipeline: 'task_pipeline'
