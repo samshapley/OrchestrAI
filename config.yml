@@ -2,7 +2,7 @@
 pipeline: 'advertising_pipeline'
 
 ### API Keys ###
-openai_api_key: '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'
+openai_api_key: 'YOUR_API_KEY'
 
 ### OpenAI Default Configs ###
 ### All calls to OpenAI will use these configs unless otherwise specified in pipeline ###
@@ -15,4 +15,4 @@ default_frequency_penalty: 0
 default_presence_penalty: 0
 
 ### Logging ###
-wandb_enabled: true
+wandb_enabled: false
