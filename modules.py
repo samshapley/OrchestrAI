@@ -10,9 +10,7 @@ import globals
 with open('config.yml', 'r') as f:
     config = yaml.safe_load(f)
 
-# Set the wandb_enabled flag
-wandb_enabled = config['wandb_enabled']
-
+wandb_enabled = config['wandb_enabled'] # Set the wandb_enabled flag
 
 def start_module(module_input, dummy=None):   
     """This function is used to invoke the start module, to accept user input into the pipeline""" 
@@ -23,7 +21,7 @@ def start_module(module_input, dummy=None):
     output = module_input + start
 
     if wandb_enabled:
-        wb.log_tool(tool_name = module_name,
+        wb.wandb_log_tool(tool_name = module_name,
                     inputs    = {},
                     outputs   = {"original_input": output},
                     parent    = globals.chain_span,
@@ -39,7 +37,7 @@ def human_intervention(module_input, dummy=None):
     output = module_input + additional_info
 
     if wandb_enabled:
-        wb.log_tool(tool_name = module_name,
+        wb.wandb_log_tool(tool_name = module_name,
                     inputs    = {},
                     outputs   = {"human_intervention": output},
                     parent    = globals.chain_span,
@@ -60,7 +58,7 @@ def chameleon(prompt, module_name, model_config=None):
     response = ai.generate_response(prompt)
 
     if wandb_enabled:
-        wb.log_llm(response, module_name, ai.model, ai.temperature, parent = globals.chain_span)
+        wb.wandb_log_llm(response, ai.model, ai.temperature, parent = globals.chain_span)
 
     return response["response_text"]
 
@@ -76,7 +74,7 @@ def engineer(prompt, model_config=None):
     response = ai.generate_response(prompt)
 
     if wandb_enabled:
-        wb.log_llm(response, module_name, ai.model, ai.temperature, parent = globals.chain_span)
+        wb.wandb_log_llm(response, ai.model, ai.temperature, parent = globals.chain_span)
 
     response_text = response["response_text"]
 
@@ -144,7 +142,7 @@ def debugger(codebase, model_config=None):
                 debug_response = ai.generate_response(prompt)
 
                 if wandb_enabled:
-                    wb.log_llm(debug_response, module_name, ai.model, ai.temperature, parent = globals.chain_span)
+                    wb.wandb_log_llm(debug_response, ai.model, ai.temperature, parent = globals.chain_span)
 
                 debugged_code = h.parse_chat(debug_response["response_text"])
 
@@ -188,7 +186,7 @@ def modify_codebase(codebase, model_config=None):
         response = ai.generate_response(codebase)
 
         if wandb_enabled:
-            wb.log_llm(response, module_name, ai.model, ai.temperature, parent = globals.chain_span)
+            wb.wandb_log_llm(response, ai.model, ai.temperature, parent = globals.chain_span)
 
         # Parse the chat and extract files
         files = h.parse_chat(response["response_text"])
@@ -212,7 +210,7 @@ def create_readme(codebase, model_config=None):
     response = ai.generate_response(codebase)
 
     if wandb_enabled:
-        wb.log_llm(response, module_name, ai.model, ai.temperature, parent = globals.chain_span)
+        wb.wandb_log_llm(response, ai.model, ai.temperature, parent = globals.chain_span)
 
     # Save the response to a README.md file in the generated_code folder
     h.to_files([("README.md", response["response_text"])])

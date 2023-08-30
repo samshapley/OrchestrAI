@@ -7,6 +7,7 @@ from wandb.sdk.data_types.trace_tree import Trace
 import globals
 import yaml
 import atexit
+import os
 
 # Load the configuration
 with open('config.yml', 'r') as f:
@@ -16,7 +17,6 @@ with open('config.yml', 'r') as f:
 wandb_enabled = config['wandb_enabled']
 pipeline_name = config['pipeline'] 
 pipeline_path = "pipelines/" + pipeline_name + ".yml"
-
 
 if wandb_enabled: # Initialize wandb if it's enabled
     wandb.init(project="OrchestrAI")

@@ -4,7 +4,6 @@ pipeline:
     output_name: request
   - module: code_planner
     inputs: [request]
-    supplement: "Use only python."
     output_name: code_plan
   - module: engineer
     inputs: [request, code_plan]

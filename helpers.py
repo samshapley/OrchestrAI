@@ -6,6 +6,10 @@ import yaml
 import matplotlib.pyplot as plt
 import shutil
 
+#open config file
+with open('config.yml', 'r') as f:
+    config = yaml.safe_load(f)
+
 def load_pipeline(file_path):
     """Load a pipeline configuration from a YAML file."""
     print("\033[93mLoading pipeline...\033[00m")
@@ -14,7 +18,6 @@ def load_pipeline(file_path):
     return pipeline
 
 def load_system_prompt(module_name):
-    
     # Load the generic system prompt
     with open('general_system.txt', 'r') as file:
         system_prompt = file.read().replace('\n', '')
@@ -22,7 +25,8 @@ def load_system_prompt(module_name):
     with open(f'system_prompts/{module_name}.txt', 'r') as file:
         module_prompt = file.read().replace('\n', '')
 
-    system_prompt = system_prompt + '\n\n --- ' + module_name.upper() + ' ---\n\n' +  module_prompt + '\n'
+    system_prompt += '\n\n --- ' + module_name.upper() + ' ---\n\n' +  module_prompt + '\n'
+
     return system_prompt
 
 def parse_chat(chat):
@@ -45,11 +49,15 @@ def to_files(files):
     if not os.path.exists("generated_code"):
         os.mkdir("generated_code")
     
-    # Create an empty requirements.txt file by default
-    with open(os.path.join("generated_code", "requirements.txt"), "w") as req_file:
-        req_file.write("")
+    # Create an empty requirements.txt file only if it doesn't exist
+    if not os.path.exists(os.path.join("generated_code", "requirements.txt")):
+        with open(os.path.join("generated_code", "requirements.txt"), "w") as req_file:
+            req_file.write("")
 
     for file_name, file_content in files:
+        # Create directories in the file path if they don't exist
+        os.makedirs(os.path.dirname(os.path.join("generated_code", file_name)), exist_ok=True)
+        
         with open(os.path.join("generated_code", file_name), "w") as file:
             file.write(file_content)
 
@@ -93,27 +101,34 @@ def run_main():
 
     return process.returncode, stderr
 
-def extract_codebase(directory='generated_code', ignore_list=[]):
-    """Extracts the exsiting codebase from the generated_code directory into a condensed string."""
+
+def extract_codebase(directory='generated_code'):
+    """Extracts the existing codebase from the generated_code directory into a condensed string."""
     
+    ignore_list = ['filename_to_ignore.py', 'another_file_to_ignore.yml']
+    ignore_endings = ['.pycache', '.pyc']
+
     result_content = []
 
-    for filename in os.listdir(directory):
-        # Skip files in ignore list
-        if filename in ignore_list:
-            continue
+    for root, dirs, files in os.walk(directory):
+        for filename in files:
+            # Skip files in ignore list
+            if filename in ignore_list:
+                continue
 
-        # Only process .py, .yml, or .md files
-        if filename.endswith(('.yml', '.py', '.md')):
-            filepath = os.path.join(directory, filename)
-            try:
-                with open(filepath, 'r') as infile:
-                    # Read the contents of the file, remove line breaks and leading spaces
-                    content = infile.read().replace('\n', '').replace('\r', '')
-                    content = ' '.join(content.split())
-                    result_content.append(f"--- File Name: {filename} ---\n{content}")
-            except Exception:
-                pass
+            # Only process files not in ignore_endings list
+            if not any(filename.endswith(ending) for ending in ignore_endings):
+                filepath = os.path.join(root, filename)
+                try:
+                    with open(filepath, 'r') as infile:
+                        # Read the contents of the file, remove line breaks and leading spaces
+                        content = infile.read().replace('\n', '').replace('\r', '')
+                        content = ' '.join(content.split())
+                        # Get the relative path of the file
+                        relative_filepath = os.path.relpath(filepath, directory)
+                        result_content.append(f"--- File Name: {relative_filepath} ---\n{content}")
+                except Exception:
+                    pass
 
     return "\n".join(result_content)
 
@@ -138,6 +153,7 @@ def visualize_pipeline(nx, G):
     nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels, font_size=6)
     
     plt.savefig("pipeline.png", dpi=300, bbox_inches='tight')
+
 
 def list_dependencies():
     with open('generated_code/requirements.txt', 'r') as f:

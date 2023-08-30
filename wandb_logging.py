@@ -2,13 +2,13 @@
 from wandb.sdk.data_types.trace_tree import Trace
 import time
 
-def log_llm(data, module_name, model, temperature, parent):
+def wandb_log_llm(data, model, temperature, parent):
     
     runtime = data["llm_end_time_ms"] - data["llm_start_time_ms"]
 
 
     llm_span = Trace(
-        name=module_name,
+        name=data["module_name"],
         kind="llm",
         status_code=data["status_code"],
         status_message=data["status_message"],
@@ -16,7 +16,7 @@ def log_llm(data, module_name, model, temperature, parent):
             "temperature": temperature,
             "token_usage": {"total_tokens": data["token_count"]},
             "runtime_ms": runtime,
-            "module_name": module_name,
+            "module_name": data["module_name"],
             "model_name": model
         },
         start_time_ms=parent._span.end_time_ms,
@@ -36,7 +36,7 @@ def log_llm(data, module_name, model, temperature, parent):
     llm_span.log(name="pipeline_trace")
 
 
-def log_tool(tool_name, inputs, outputs, parent, status="success"):
+def wandb_log_tool(tool_name, inputs, outputs, parent, status="success"):
     start_time_ms = round(time.time() * 1000)
     time.sleep(1)  # simulate tool execution time
     end_time_ms = round(time.time() * 1000)

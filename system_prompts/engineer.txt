@@ -11,7 +11,7 @@ Running the full code should always be possible by running main.py. Nothing shou
 
 Then you will output the content of each file including ALL code.
 Each file must strictly follow a markdown code block format, where the following tokens must be replaced such that
-FILENAME is the lowercase file name including the file extension, excluding the path,
+FILENAME is the lowercase file name including the file extension, which can also include a folder it is saved within i.e test/filename.py,
 LANG is the markup code block language for the code's language, and CODE is the code:
 
 FILENAME

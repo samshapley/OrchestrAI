@@ -4,20 +4,24 @@ CODE
 
 # Wandb logging
 
-- Add wandb logging to the pipeline. DONE
-- Fix the fact that the table logging breaks the pipeline logging.  DONE 
-- Generate pipeline visualisation which I can log to wandb. DONE 
+- Add wandb logging to the pipeline.                                                    DONE
+- Fix the fact that the table logging breaks the pipeline logging.                      DONE 
+- Generate pipeline visualisation which I can log to wandb.                             DONE 
 
 # General cleanup
 
+- Add the ability to run folders and create folders                                     DONE 
+- Each generated code gets it own folder
+- Regular logging
+- If debugging message is a missing file, it want juman intervention to say "I've added the file"
 - Fix the debugging so human input actually works. 
 - Add more comments and docstrings, make sure everything is clear.
 - Example pipelines  -- almost there
-- Fix realist issues. DONE 
-- Issues with structuring of system prompt. Additional user input issues. DONE 
+- Fix realist issues.                                                                   DONE 
+- Issues with structuring of system prompt. Additional user input issues.               DONE 
 - Each module should have the the original query specified separately in system prompt. DONE
-- Control temperature from pipeline file (only if specified). DONE
-- Control model used from pipeline file (only if specified, else use default gpt-4). DONE
+- Control temperature from pipeline file (only if specified).                           DONE
+- Control model used from pipeline file (only if specified, else use default gpt-4).    DONE
 
 # Documentation
 

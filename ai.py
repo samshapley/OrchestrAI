@@ -1,6 +1,7 @@
 import openai
 import yaml
 
+
 # Load the configuration
 with open('config.yml', 'r') as f:
     config = yaml.safe_load(f)
@@ -13,6 +14,7 @@ default_top_p = config['default_top_p']
 default_max_tokens = config['default_max_tokens']
 default_frequency_penalty = config['default_frequency_penalty']
 default_presence_penalty = config['default_presence_penalty']
+
 
 # Check if the API key works
 try:
@@ -70,6 +72,7 @@ class AI:
             print()
 
             response_text = "".join(chat)
+ 
             llm_end_time_ms = round(datetime.datetime.now().timestamp() * 1000)  # logged in milliseconds
             status_code="success"
             status_message=None,
@@ -86,6 +89,7 @@ class AI:
         self.messages.append({"role": "assistant", "content": response_text})
 
         return {
+        "module_name": self.module_name,
         "response_text": response_text,
         "messages": self.messages,
         "llm_end_time_ms": llm_end_time_ms,
