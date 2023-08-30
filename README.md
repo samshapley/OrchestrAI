@@ -11,7 +11,8 @@ A couple of things to bear in mind
 
 Watch this demo video to see how you can build a low-code autonomous agent in 2 minutes.
 
-[![Demo Video](https://img.youtube.com/vi/pTyiPPZu20U/0.jpg)](https://youtu.be/pTyiPPZu20U)
+https://github.com/samshapley/OrchestrAI/assets/93387313/79133f22-348d-4a70-be6f-9171eb6fd0f2
+
 
 ### Prerequisites
 
