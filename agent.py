@@ -2,7 +2,7 @@ from orchestrate import execute_pipeline
 import helpers as h
 import time
 import wandb
-import datetime
+from datetime import datetime
 from wandb.sdk.data_types.trace_tree import Trace
 import globals
 import yaml
@@ -41,7 +41,7 @@ def main():
         }, file)
 
     if wandb_enabled:
-        globals.agent_start_time_ms = round(datetime.datetime.now().timestamp() * 1000) 
+        globals.agent_start_time_ms = round(datetime.now().timestamp() * 1000) 
 
         # create a root span for the agent.
         root_span = Trace(
@@ -65,14 +65,8 @@ def main():
         ## Just in case it crashes, we want to log the root span to wandb anyway so we use atexit
         def closing_log():
 
-            agent_end_time_ms = round(datetime.datetime.now().timestamp() * 1000)
-
-            with open('memory_log.json', 'w') as file:
-                json.dump({
-                    'agent_end_time': agent_end_time_ms,
-                    'run_time': agent_end_time_ms - globals.agent_start_time_ms,
-                }, file)
-                
+            agent_end_time_ms = round(datetime.now().timestamp() * 1000)
+          
             # Convert the timestamp to datetime
             agent_end_time = datetime.fromtimestamp(agent_end_time_ms / 1000)
 
@@ -99,7 +93,7 @@ def main():
     finally:
         if wandb_enabled:
             # Log the root span to Weights & Biases
-            agent_end_time_ms = round(datetime.datetime.now().timestamp() * 1000)
+            agent_end_time_ms = round(datetime.now().timestamp() * 1000)
             root_span._span.end_time_ms = agent_end_time_ms
             root_span.log(name="pipeline_trace")
 

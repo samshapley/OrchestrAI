@@ -4,7 +4,6 @@ pipeline:
     output_name: request
   - module: advertising_planner
     inputs: [request]
-    supplement: "males 18-45"
     output_name: advert_plan
   - module: slogan_generator
     model_config:
@@ -12,3 +11,10 @@ pipeline:
       temperature: 1.2
     inputs: [request, advert_plan]
     output_name: slogan
+  - module: script_writer
+    supplement: "This is for a TV spot, 30 seconds long."
+    model_config:
+      model: 'gpt-3.5-turbo'
+      temperature: 1.2
+    inputs: [request, advert_plan, slogan]
+    output_name: script
