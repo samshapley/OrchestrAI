@@ -9,6 +9,10 @@ A couple of things to bear in mind
 
 ## Getting Started
 
+Watch this demo video to see how you can build a low-code autonomous agent in 2 minutes.
+
+[![Demo Video](https://img.youtube.com/vi/pTyiPPZu20U/0.jpg)](https://youtu.be/pTyiPPZu20U)
+
 ### Prerequisites
 
 To run OrchestrAI, you'll need:
