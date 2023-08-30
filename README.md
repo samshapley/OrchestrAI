@@ -1,5 +1,3 @@
-
-https://github.com/samshapley/OrchestrAI/assets/93387313/4badd6f0-5fa7-4b0e-81cd-6227bff32406
 # OrchestrAI
 
 OrchestrAI is a Python-based system that orchestrates interactions between multiple instances of OpenAI's GPT-4 model to execute complex tasks. It uses the `networkx` library to manage dependencies between various AI modules, and YAML to define and manage task pipelines.  
