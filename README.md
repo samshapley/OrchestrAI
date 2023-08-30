@@ -173,7 +173,7 @@ def new_module(prompt):
   return output
 ```
 
-2. If this module requires a call to OpenAI, design and load the appropriate system prompt for your module from `system_prompts/`.
+2. If this module requires a call to OpenAI, design the appropriate system prompt for your module from `system_prompts/`.
 
 3. Interact with the model via the `AI` class to generate a response.
 
