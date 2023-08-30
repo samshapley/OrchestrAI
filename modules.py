@@ -79,7 +79,7 @@ def engineer(prompt, model_config=None):
 
     ll.log_action({"module": module_name, "input": prompt, "output": response})
     if wandb_enabled:
-        globals.engineer_span = wb.wandb_log_llm(response, ai.model, ai.temperature, parent = globals.chain_span)
+        wb.wandb_log_llm(response, ai.model, ai.temperature, parent = globals.chain_span)
 
     response_text = response["response_text"]
 

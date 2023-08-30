@@ -73,7 +73,12 @@ def main():
                     'run_time': agent_end_time_ms - globals.agent_start_time_ms,
                 }, file)
                 
-            current_time = agent_end_time_ms.strftime("%Y-%m-%d_%H-%M-%S")
+            # Convert the timestamp to datetime
+            agent_end_time = datetime.fromtimestamp(agent_end_time_ms / 1000)
+
+            # Format the datetime object to a string
+            current_time = agent_end_time.strftime("%Y-%m-%d_%H-%M-%S")
+
             
             os.replace('memory_log.json', f'logs/log_{current_time}.json')
             

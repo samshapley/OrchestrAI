@@ -45,7 +45,7 @@ The `modules.py` file contains different AI modules, each responsible for a spec
 
 Each module interacts with the a language model to execute its specific task, and the output is stored for use in subsequent operations as defined in the pipeline. Currently, the modules are only communicating with OpenAI, but this can be extended to other language models as well.
 
-The most basic module is the `chameleon` module, which is a generic module used to make an OpenAI with custom settings and system prompt. This allows you to easily create new modules by simply adding a system prompt to the `system_prompts` folder. 
+The most basic module is the `chameleon` module, which is a generic module used to make an OpenAI call with custom settings and system prompt. This allows you to easily create new modules by simply adding a system prompt to the `system_prompts` folder. This module will be invoked if the system prompt exists, and the module name is specified in the pipeline, but no matching function exists in `modules.py`.
 
 ### Setting Up a Pipeline
 
@@ -94,7 +94,7 @@ pipeline:
     supplement: "Spanish"
     output_name: translation
 ```
-Once you have defined your pipeline, you can ensure it will be run byy specifying the pipeline name in the config.yml file.
+Once you have defined your pipeline, you can ensure it will be run by specifying the pipeline name in the config.yml file.
 
 ### Running the Script
 
