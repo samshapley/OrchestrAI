@@ -7,7 +7,12 @@ from wandb.sdk.data_types.trace_tree import Trace
 import globals
 import yaml
 import atexit
+import json
 import os
+
+# create logs directory if it doesn't exist
+if not os.path.exists('logs'):
+    os.makedirs('logs')
 
 # Load the configuration
 with open('config.yml', 'r') as f:
@@ -27,6 +32,13 @@ def main():
     time.sleep(1) # dramatic effect
     
     pipeline = h.load_pipeline(pipeline_path) # Load the pipeline
+
+    with open('memory_log.json', 'w') as file:
+        json.dump({
+            'agent_start_time': time.time(),
+            'pipeline_name': pipeline_name,
+            'actions': []
+        }, file)
 
     if wandb_enabled:
         globals.agent_start_time_ms = round(datetime.datetime.now().timestamp() * 1000) 
@@ -51,18 +63,25 @@ def main():
         root_span.add_child(globals.chain_span) # add the chain span as a child of the root span
 
         ## Just in case it crashes, we want to log the root span to wandb anyway so we use atexit
-        def log_to_wandb():
-            # Check if wandb.run is None
+        def closing_log():
+            agent_end_time_ms = round(datetime.datetime.now().timestamp() * 1000)
+            os.rename('memory_log.json', f'log_{agent_end_time_ms}.json')
+            os.replace(f'log_{agent_end_time_ms}.json', f'logs/log_{agent_end_time_ms}.json')
+            
+            # delete the memory log
+            os.remove('memory_log.json')
+
             if wandb.run is None:
                 return
-
+            
             # Log the root span to Weights & Biases
-            agent_end_time_ms = round(datetime.datetime.now().timestamp() * 1000)
             root_span._span.end_time_ms = agent_end_time_ms
             root_span.log(name="pipeline_trace")
 
+            
+
         # Register the function to be called on exit
-        atexit.register(log_to_wandb)
+        atexit.register(closing_log)
 
     try:
         execute_pipeline(pipeline) # Execute the pipeline using the orchestrate.py script

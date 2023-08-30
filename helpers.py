@@ -126,7 +126,7 @@ def extract_codebase(directory='generated_code'):
                         content = ' '.join(content.split())
                         # Get the relative path of the file
                         relative_filepath = os.path.relpath(filepath, directory)
-                        result_content.append(f"--- File Name: {relative_filepath} ---\n{content}")
+                        result_content.append(f"----{relative_filepath}----\n{content}")
                 except Exception:
                     pass
 

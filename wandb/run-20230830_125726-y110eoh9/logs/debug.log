@@ -1,0 +1,36 @@
+2023-08-30 12:57:26,286 INFO    MainThread:26429 [wandb_setup.py:_flush():76] Current SDK version is 0.15.8
+2023-08-30 12:57:26,286 INFO    MainThread:26429 [wandb_setup.py:_flush():76] Configure stats pid to 26429
+2023-08-30 12:57:26,286 INFO    MainThread:26429 [wandb_setup.py:_flush():76] Loading settings from /Users/samuel.shapley/.config/wandb/settings
+2023-08-30 12:57:26,286 INFO    MainThread:26429 [wandb_setup.py:_flush():76] Loading settings from /Users/samuel.shapley/OrchestrAI/wandb/settings
+2023-08-30 12:57:26,286 INFO    MainThread:26429 [wandb_setup.py:_flush():76] Loading settings from environment variables: {}
+2023-08-30 12:57:26,286 INFO    MainThread:26429 [wandb_setup.py:_flush():76] Applying setup settings: {'_disable_service': False}
+2023-08-30 12:57:26,286 INFO    MainThread:26429 [wandb_setup.py:_flush():76] Inferring run settings from compute environment: {'program_relpath': 'agent.py', 'program': '/Users/samuel.shapley/OrchestrAI/agent.py'}
+2023-08-30 12:57:26,286 INFO    MainThread:26429 [wandb_init.py:_log_setup():507] Logging user logs to /Users/samuel.shapley/OrchestrAI/wandb/run-20230830_125726-y110eoh9/logs/debug.log
+2023-08-30 12:57:26,286 INFO    MainThread:26429 [wandb_init.py:_log_setup():508] Logging internal logs to /Users/samuel.shapley/OrchestrAI/wandb/run-20230830_125726-y110eoh9/logs/debug-internal.log
+2023-08-30 12:57:26,286 INFO    MainThread:26429 [wandb_init.py:init():547] calling init triggers
+2023-08-30 12:57:26,286 INFO    MainThread:26429 [wandb_init.py:init():554] wandb.init called with sweep_config: {}
+config: {}
+2023-08-30 12:57:26,287 INFO    MainThread:26429 [wandb_init.py:init():596] starting backend
+2023-08-30 12:57:26,287 INFO    MainThread:26429 [wandb_init.py:init():600] setting up manager
+2023-08-30 12:57:26,288 INFO    MainThread:26429 [backend.py:_multiprocessing_setup():106] multiprocessing start_methods=spawn,fork,forkserver, using: spawn
+2023-08-30 12:57:26,289 INFO    MainThread:26429 [wandb_init.py:init():606] backend started and connected
+2023-08-30 12:57:26,291 INFO    MainThread:26429 [wandb_init.py:init():697] updated telemetry
+2023-08-30 12:57:26,310 INFO    MainThread:26429 [wandb_init.py:init():730] communicating run to backend with 60.0 second timeout
+2023-08-30 12:57:27,272 INFO    MainThread:26429 [wandb_run.py:_on_init():2180] communicating current version
+2023-08-30 12:57:27,503 INFO    MainThread:26429 [wandb_run.py:_on_init():2189] got version response upgrade_message: "wandb version 0.15.9 is available!  To upgrade, please run:\n $ pip install wandb --upgrade"
+
+2023-08-30 12:57:27,504 INFO    MainThread:26429 [wandb_init.py:init():781] starting run threads in backend
+2023-08-30 12:57:27,574 INFO    MainThread:26429 [wandb_run.py:_console_start():2159] atexit reg
+2023-08-30 12:57:27,574 INFO    MainThread:26429 [wandb_run.py:_redirect():2014] redirect: wrap_raw
+2023-08-30 12:57:27,575 INFO    MainThread:26429 [wandb_run.py:_redirect():2079] Wrapping output streams.
+2023-08-30 12:57:27,575 INFO    MainThread:26429 [wandb_run.py:_redirect():2104] Redirects installed.
+2023-08-30 12:57:27,575 INFO    MainThread:26429 [wandb_init.py:init():822] run started, returning control to user process
+2023-08-30 12:57:27,576 INFO    MainThread:26429 [wandb_config.py:__setitem__():151] config set wandb_enabled = True - <bound method Run._config_callback of <wandb.sdk.wandb_run.Run object at 0x1223e6b10>>
+2023-08-30 12:57:27,576 INFO    MainThread:26429 [wandb_run.py:_config_callback():1282] config_cb wandb_enabled True None
+2023-08-30 12:59:30,020 INFO    MainThread:26429 [wandb_run.py:_finish():1894] finishing run samuel-shapley/OrchestrAI/y110eoh9
+2023-08-30 12:59:30,021 INFO    MainThread:26429 [wandb_run.py:_atexit_cleanup():2128] got exitcode: 0
+2023-08-30 12:59:30,021 INFO    MainThread:26429 [wandb_run.py:_restore():2111] restore
+2023-08-30 12:59:30,021 INFO    MainThread:26429 [wandb_run.py:_restore():2117] restore done
+2023-08-30 12:59:37,652 INFO    MainThread:26429 [wandb_run.py:_footer_history_summary_info():3481] rendering history
+2023-08-30 12:59:37,652 INFO    MainThread:26429 [wandb_run.py:_footer_history_summary_info():3513] rendering summary
+2023-08-30 12:59:37,655 INFO    MainThread:26429 [wandb_run.py:_footer_sync_info():3440] logging synced files

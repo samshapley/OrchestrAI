@@ -17,7 +17,11 @@ def wandb_log_llm(data, model, temperature, parent):
             "token_usage": {"total_tokens": data["token_count"]},
             "runtime_ms": runtime,
             "module_name": data["module_name"],
-            "model_name": model
+            "model_name": model,
+            "max_tokens": data["max_tokens"],
+            "top_p": data["top_p"],
+            "frequency_penalty": data["frequency_penalty"],
+            "presence_penalty": data["presence_penalty"]
         },
         start_time_ms=parent._span.end_time_ms,
         end_time_ms=data["llm_end_time_ms"],
@@ -37,7 +41,7 @@ def wandb_log_llm(data, model, temperature, parent):
 
 
 def wandb_log_tool(tool_name, inputs, outputs, parent, status="success"):
-    start_time_ms = round(time.time() * 1000)
+
     time.sleep(1)  # simulate tool execution time
     end_time_ms = round(time.time() * 1000)
 
@@ -65,3 +69,5 @@ def wandb_log_tool(tool_name, inputs, outputs, parent, status="success"):
 
     # log the span to wandb
     tool_span.log(name="pipeline_trace")
+
+    return tool_span

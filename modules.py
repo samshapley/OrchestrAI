@@ -4,6 +4,7 @@ import yaml
 import helpers as h
 from ai import AI
 import wandb_logging as wb
+import local_logging as ll
 import globals
 
 # Load the configuration
@@ -20,6 +21,7 @@ def start_module(module_input, dummy=None):
 
     output = module_input + start
 
+    ll.log_action({"module": module_name, "input": module_input, "output": output})
     if wandb_enabled:
         wb.wandb_log_tool(tool_name = module_name,
                     inputs    = {},
@@ -36,6 +38,7 @@ def human_intervention(module_input, dummy=None):
 
     output = module_input + additional_info
 
+    ll.log_action({"module": module_name, "input": module_input, "output": output})
     if wandb_enabled:
         wb.wandb_log_tool(tool_name = module_name,
                     inputs    = {},
@@ -57,6 +60,7 @@ def chameleon(prompt, module_name, model_config=None):
     ai = AI(module_name, model_config=model_config)
     response = ai.generate_response(prompt)
 
+    ll.log_action({"module": module_name, "input": prompt, "output": response})
     if wandb_enabled:
         wb.wandb_log_llm(response, ai.model, ai.temperature, parent = globals.chain_span)
 
@@ -73,8 +77,9 @@ def engineer(prompt, model_config=None):
 
     response = ai.generate_response(prompt)
 
+    ll.log_action({"module": module_name, "input": prompt, "output": response})
     if wandb_enabled:
-        wb.wandb_log_llm(response, ai.model, ai.temperature, parent = globals.chain_span)
+        globals.engineer_span = wb.wandb_log_llm(response, ai.model, ai.temperature, parent = globals.chain_span)
 
     response_text = response["response_text"]
 
@@ -103,8 +108,13 @@ def debugger(codebase, model_config=None):
     os.system("pip3 install -r generated_code/requirements.txt")
     print("\033[92mDependencies installed!\033[00m")
     
+    human_intervention_provided = False
+
     while True:
-        exit_code, error_msg = h.run_main()
+        if not human_intervention_provided:
+            exit_code, error_msg = h.run_main()
+        else:
+            human_intervention_provided = False
         
         # If exit code is 0, the process ran successfully
         if exit_code == 0:
@@ -113,7 +123,8 @@ def debugger(codebase, model_config=None):
         
         # If there was an error
         else:
-            print(f"Error encountered: {error_msg}")
+            if not human_intervention_provided:
+                print(f"Error encountered: {error_msg}")
             
             # Check if we have made more than 3 debugging attempts
             if debug_attempt >= max_attempts:
@@ -123,10 +134,11 @@ def debugger(codebase, model_config=None):
                 choice = input("Please select an option (1 or 2): ")
                 
                 if choice == "1":
+                    human_intervention_provided = True
                     debug_attempt = 0
                     attempts_left = max_attempts
-                    print("Please provide input for human intervention:")
-                    human_input = input()
+                    print("\033[93mPlease provide input for human intervention:\033[00m")
+                    human_input = human_intervention(codebase)
                     prompt = codebase + "\n The error encountered is: \n" + error_msg + "\n Human Intervention: \n" + human_input
                 elif choice == "2":
                     break # End debugging and move to next module
@@ -141,6 +153,7 @@ def debugger(codebase, model_config=None):
                 ai = AI(module_name, model_config=model_config)
                 debug_response = ai.generate_response(prompt)
 
+                ll.log_action({"module": module_name, "input": prompt, "output": debug_response})
                 if wandb_enabled:
                     wb.wandb_log_llm(debug_response, ai.model, ai.temperature, parent = globals.chain_span)
 
@@ -185,6 +198,7 @@ def modify_codebase(codebase, model_config=None):
         print("\033[93mModifying codebase...\033[00m")
         response = ai.generate_response(codebase)
 
+        ll.log_action({"module": module_name, "input": codebase, "output": response})
         if wandb_enabled:
             wb.wandb_log_llm(response, ai.model, ai.temperature, parent = globals.chain_span)
 
@@ -209,6 +223,7 @@ def create_readme(codebase, model_config=None):
     print("\033[93mGenerating README.md...\033[00m")
     response = ai.generate_response(codebase)
 
+    ll.log_action({"module": module_name, "input": codebase, "output": response})
     if wandb_enabled:
         wb.wandb_log_llm(response, ai.model, ai.temperature, parent = globals.chain_span)
 

@@ -11,10 +11,9 @@ CODE
 # General cleanup
 
 - Add the ability to run folders and create folders                                     DONE 
-- Each generated code gets it own folder
 - Regular logging
 - If debugging message is a missing file, it want juman intervention to say "I've added the file"
-- Fix the debugging so human input actually works. 
+- Fix the debugging so human input actually works.                                                    
 - Add more comments and docstrings, make sure everything is clear.
 - Example pipelines  -- almost there
 - Fix realist issues.                                                                   DONE 

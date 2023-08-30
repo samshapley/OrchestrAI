@@ -1,5 +1,5 @@
 ### Pipeline ###
-pipeline: 'engineering_pipeline'
+pipeline: 'task_pipeline'
 
 ### API Keys ###
 openai_api_key: 'OPENAI_API_KEY'
@@ -7,7 +7,7 @@ openai_api_key: 'OPENAI_API_KEY'
 ### OpenAI Default Configs ###
 ### All calls to OpenAI will use these configs unless otherwise specified in pipeline ###
 
-default_model: 'gpt-4' # Recommended to set to a cheaper model for testing.
+default_model: 'gpt-3.5-turbo' # Recommended to set to a cheaper model for testing.
 default_temperature: 0.8
 default_max_tokens: Null
 default_top_p: 1
@@ -15,4 +15,4 @@ default_frequency_penalty: 0
 default_presence_penalty: 0
 
 ### Logging ###
-wandb_enabled: false
+wandb_enabled: true

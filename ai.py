@@ -31,6 +31,7 @@ import yaml
 class AI:
     def __init__(self, module_name, model_config=None, openai=openai):
         self.openai = openai
+        self.model_config = model_config
         self.model = model_config.get('model', default_model) if model_config else default_model
         self.temperature = model_config.get('temperature', default_temperature) if model_config else default_temperature
         self.top_p = model_config.get('top_p', default_top_p) if model_config else default_top_p
@@ -98,5 +99,10 @@ class AI:
         "status_code": status_code,
         "status_message": status_message,
         "system_prompt": self.system,
-        "prompt": prompt
+        "prompt": prompt,
+        "max_tokens": self.max_tokens,
+        "top_p": self.top_p,
+        "temperature": self.temperature,
+        "frequency_penalty": self.frequency_penalty,
+        "presence_penalty": self.presence_penalty,
         }
