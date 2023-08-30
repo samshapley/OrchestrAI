@@ -1,7 +1,4 @@
 globals==0.3.36
-matplotlib==3.7.1
 networkx==2.8.8
 openai==0.27.8
-pandas==2.0.3
 PyYAML==6.0
-wandb==0.15.9

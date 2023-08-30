@@ -64,21 +64,25 @@ def main():
 
         ## Just in case it crashes, we want to log the root span to wandb anyway so we use atexit
         def closing_log():
-            agent_end_time_ms = round(datetime.datetime.now().timestamp() * 1000)
-            os.rename('memory_log.json', f'log_{agent_end_time_ms}.json')
-            os.replace(f'log_{agent_end_time_ms}.json', f'logs/log_{agent_end_time_ms}.json')
-            
-            # delete the memory log
-            os.remove('memory_log.json')
 
+            agent_end_time_ms = round(datetime.datetime.now().timestamp() * 1000)
+
+            with open('memory_log.json', 'w') as file:
+                json.dump({
+                    'agent_end_time': agent_end_time_ms,
+                    'run_time': agent_end_time_ms - globals.agent_start_time_ms,
+                }, file)
+                
+            current_time = agent_end_time_ms.strftime("%Y-%m-%d_%H-%M-%S")
+            
+            os.replace('memory_log.json', f'logs/log_{current_time}.json')
+            
             if wandb.run is None:
                 return
             
             # Log the root span to Weights & Biases
             root_span._span.end_time_ms = agent_end_time_ms
             root_span.log(name="pipeline_trace")
-
-            
 
         # Register the function to be called on exit
         atexit.register(closing_log)

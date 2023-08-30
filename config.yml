@@ -15,4 +15,4 @@ default_frequency_penalty: 0
 default_presence_penalty: 0
 
 ### Logging ###
-wandb_enabled: true
+wandb_enabled: false
