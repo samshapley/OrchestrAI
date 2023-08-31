@@ -1,13 +1,13 @@
 # modules.py
 import os
 import yaml
-import helpers as h
 from ai import AI
 from codebase_manager import CodebaseManager
 import wandb_logging as wb
 import local_logging as ll
 import globals
-
+import tool_manager as tool
+from datetime import datetime
 
 # Load the configuration
 with open('config.yml', 'r') as f:
@@ -16,10 +16,15 @@ with open('config.yml', 'r') as f:
 wandb_enabled = config['wandb_enabled'] # Set the wandb_enabled flag
 working_codebase_dirname = config['working_codebase_dirname'] # Where code is accessed during a pipeline run
 
+# Communicate with working codebase
 codebase_portal = CodebaseManager(working_codebase_dirname)
+
+wandb_enabled = config['wandb_enabled'] # Set the wandb_enabled flag
+tools_enabled = config['tools_enabled'] # Set the tools_enabled flag
 
 def start_module(module_input, dummy=None):   
     """This function is used to invoke the start module, to accept user input into the pipeline""" 
+    start_time_ms = round(datetime.now().timestamp() * 1000) 
     module_name = "start_module"
     print("\033[92mPlease specify the task you want to perform:\033[00m")
     start = input()
@@ -29,14 +34,16 @@ def start_module(module_input, dummy=None):
     ll.log_action({"module": module_name, "input": module_input, "output": output})
     if wandb_enabled:
         wb.wandb_log_tool(tool_name = module_name,
+                    start_time_ms = start_time_ms,
                     inputs    = {},
                     outputs   = {"original_input": output},
                     parent    = globals.chain_span,
                     status    = "success")
-
+        
     return output
 
 def human_intervention(module_input, dummy=None):
+    start_time_ms = round(datetime.now().timestamp() * 1000) 
     module_name = "human_intervention"
     print("Please provide additional information to guide the agent:")
     additional_info = input()
@@ -46,6 +53,7 @@ def human_intervention(module_input, dummy=None):
     ll.log_action({"module": module_name, "input": module_input, "output": output})
     if wandb_enabled:
         wb.wandb_log_tool(tool_name = module_name,
+                    start_time_ms= start_time_ms,
                     inputs    = {},
                     outputs   = {"human_intervention": output},
                     parent    = globals.chain_span,
@@ -68,6 +76,8 @@ def chameleon(prompt, module_name, model_config=None):
     ll.log_action({"module": module_name, "input": prompt, "output": response})
     if wandb_enabled:
         wb.wandb_log_llm(response, ai.model, ai.temperature, parent = globals.chain_span)
+    if tools_enabled:
+        tool.use_tools(response["response_text"])
 
     return response["response_text"]
 
