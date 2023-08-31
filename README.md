@@ -25,6 +25,8 @@ To run OrchestrAI, you'll need:
 - OpenAI Python library  
 - networkx
 - PyYAML
+- wandb
+- matplotlib
 
 Install these with pip:
 
@@ -41,7 +43,8 @@ OrchestrAI requires the following files:
 - `ai.py` - Manages interactions with the OpenAI API.
 - `modules.py` - Contains available modules and their logic.
 - `orchestrate.py` - Loads modules and pipelines, constructs a Directed Acyclic Graph (DAG) of operations, and executes them in the    correct order.
-- `helpers.py` - Provides helper functions, including loading system prompts, parsing chat data, and writing code files.
+- `codebase_manager.py` - Manages the generated codebase. Extraction of code from responses, alongside codebase update and compression.
+- `helpers.py` - Provides helper functions.
 
 We store pipeline.yml files in the pipelines folder. This allows you to create multiple pipelines for different tasks. You can specify which pipeline the agent runs in the config.yml file.
 
@@ -119,6 +122,8 @@ The script will execute the operations in the pipeline in the order specified, q
 
 This is an example pipeline built to demonstrate the capabilities of OrchestrAI. It is a pipeline that uses AI to generate a working codebase from a high-level description of the task. For full understanding, please read the system prompts of each module in the system_prompts folder, and the code in the modules.py file. (this base version can essentially only create python based repositories)
 
+The CodebaseManager class in codebase_manager.py handles methods for interacting with the generated codebase.
+
 ```yaml
 pipeline: 
   - module: start_module
@@ -145,7 +150,7 @@ pipeline:
 ```
 ### Code Planning and Engineering
 
-The `code_planner` and `engineer` modules should be used in tandem to create a repository in the `generated_code` folder. The code planner will provide a detailed overview of the implementation, and the engineer will generate the code to implement the plan. The engineer module is custom, and does not use the chameleon. We carry out regex based parsing to extract the code into the repository. This repository is then condensed into a token-reduced version, and used as the output `code` for the engineer module. This condensed codebase string can be used as input for the debugger module and/or the modify_codebase module.
+The `code_planner` and `engineer` modules should be used in tandem to create a repository in the working codebase directory, set in the config. The code planner will provide a detailed overview of the implementation, and the engineer will generate the code to implement the plan. The engineer module is custom, and does not use the chameleon. We carry out regex based parsing to extract the code into the repository. This repository is then condensed into a token-reduced version, and used as the output `code` for the engineer module. This condensed codebase string can be used as input for the debugger module and/or the modify_codebase module.
 
 ### Self-Debugging
 
