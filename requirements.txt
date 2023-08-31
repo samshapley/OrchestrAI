@@ -2,3 +2,4 @@ globals==0.3.36
 networkx==2.8.8
 openai==0.27.8
 PyYAML==6.0
+matplotlib
