@@ -18,4 +18,9 @@ default_presence_penalty: 0
 ### Logging ###
 wandb_enabled: false
 
+### Tools ###
+tools_enabled: true
+active_tools:
+  - 'generate_image'
+
 working_codebase_dirname: 'generated_code' # A folder that exists 
