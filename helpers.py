@@ -1,14 +1,5 @@
-import os
-import re
-import subprocess
-import sys
 import yaml
 import matplotlib.pyplot as plt
-import shutil
-
-#open config file
-with open('config.yml', 'r') as f:
-    config = yaml.safe_load(f)
 
 def load_pipeline(file_path):
     """Load a pipeline configuration from a YAML file."""
@@ -28,109 +19,6 @@ def load_system_prompt(module_name):
     system_prompt += '\n\n --- ' + module_name.upper() + ' ---\n\n' +  module_prompt + '\n'
 
     return system_prompt
-
-def parse_chat(chat):
-    print("\033[95mExtracting code...\033[00m")
-    # Get all ``` blocks and preceding filenames
-    regex = r"(\S+)\n\s*```[^\n]*\n(.+?)```"
-    matches = re.finditer(regex, chat, re.DOTALL)
-    files = []
-    for match in matches:
-        # Extract the filename and code, thanks gpt-engineer for this regex!
-        path = re.sub(r"[<>'|?*]", "", match.group(1))
-        path = re.sub(r"^\[(.*)\]$", r"\1", path)
-        path = re.sub(r"^`(.*)`$", r"\1", path)
-        path = re.sub(r"\]$", "", path)
-        code = match.group(2)
-        files.append((path, code))
-    return files
-
-def to_files(files):
-    if not os.path.exists("generated_code"):
-        os.mkdir("generated_code")
-    
-    # Create an empty requirements.txt file only if it doesn't exist
-    if not os.path.exists(os.path.join("generated_code", "requirements.txt")):
-        with open(os.path.join("generated_code", "requirements.txt"), "w") as req_file:
-            req_file.write("")
-
-    for file_name, file_content in files:
-        # Create directories in the file path if they don't exist
-        os.makedirs(os.path.dirname(os.path.join("generated_code", file_name)), exist_ok=True)
-        
-        with open(os.path.join("generated_code", file_name), "w") as file:
-            file.write(file_content)
-
-def run_main():
-    """
-    Execute the main.py script from the generated_code directory.
-
-    This function utilizes subprocess.Popen to run the main.py script in a separate process.
-    The stdout (standard output) of the subprocess is set to be printed in real-time to the terminal.
-    This ensures that any prompts in the main.py script requiring user input will be displayed and can be interacted with.
-    Meanwhile, the stderr (standard error) of the subprocess is captured and returned, 
-    which allows for error handling in the event of any issues during the script's execution.
-
-    Returns:
-        tuple: A tuple containing two items:
-            - The return code (exit status) of the subprocess. A value of 0 typically indicates successful execution, while any other value suggests an error.
-            - The error message (if any) captured from the stderr of the subprocess.
-    """
-
-    # Start a new process to run the main.py script. 
-    # stdout=None ensures the standard output (e.g., print statements, prompts for input) 
-    # of the script is directly displayed in real-time on the terminal.
-    # stderr=subprocess.PIPE captures the error stream of the script, which can be later accessed.
-        # Check if 'python3' is available in PATH
-    if shutil.which('python3') is not None:
-        python_command = 'python3'
-    else:
-        python_command = 'python'
-
-    process = subprocess.Popen(
-        [python_command, "generated_code/main.py"],
-        text=True,
-        bufsize=1,
-        stdout=sys.stdout,  # Connect subprocess's stdout directly to the terminal
-        stdin=sys.stdin,    # Connect subprocess's stdin directly to the terminal
-        stderr=subprocess.PIPE
-    )
-
-    # Wait for the subprocess to finish and capture any error message from the stderr.
-    _, stderr = process.communicate()
-
-    return process.returncode, stderr
-
-
-def extract_codebase(directory='generated_code'):
-    """Extracts the existing codebase from the generated_code directory into a condensed string."""
-    
-    ignore_list = ['filename_to_ignore.py', 'another_file_to_ignore.yml']
-    ignore_endings = ['.pycache', '.pyc']
-
-    result_content = []
-
-    for root, dirs, files in os.walk(directory):
-        for filename in files:
-            # Skip files in ignore list
-            if filename in ignore_list:
-                continue
-
-            # Only process files not in ignore_endings list
-            if not any(filename.endswith(ending) for ending in ignore_endings):
-                filepath = os.path.join(root, filename)
-                try:
-                    with open(filepath, 'r') as infile:
-                        # Read the contents of the file, remove line breaks and leading spaces
-                        content = infile.read().replace('\n', '').replace('\r', '')
-                        content = ' '.join(content.split())
-                        # Get the relative path of the file
-                        relative_filepath = os.path.relpath(filepath, directory)
-                        result_content.append(f"----{relative_filepath}----\n{content}")
-                except Exception:
-                    pass
-
-    return "\n".join(result_content)
 
 def visualize_pipeline(nx, G):
     # Increase distance between nodes by setting k parameter
@@ -153,9 +41,3 @@ def visualize_pipeline(nx, G):
     nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels, font_size=6)
     
     plt.savefig("pipeline.png", dpi=300, bbox_inches='tight')
-
-
-def list_dependencies():
-    with open('generated_code/requirements.txt', 'r') as f:
-        dependencies = f.read().splitlines()
-    return dependencies

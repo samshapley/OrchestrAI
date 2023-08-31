@@ -3,9 +3,11 @@ import os
 import yaml
 import helpers as h
 from ai import AI
+from codebase_manager import CodebaseManager
 import wandb_logging as wb
 import local_logging as ll
 import globals
+codebase_portal = CodebaseManager()
 
 # Load the configuration
 with open('config.yml', 'r') as f:
@@ -84,14 +86,14 @@ def engineer(prompt, model_config=None):
     response_text = response["response_text"]
 
     # Parse the chat and extract files
-    files = h.parse_chat(response_text)
+    files = codebase_portal.extract_code(response_text)
     
-    # Save files to disk
-    h.to_files(files)
+    # Save files
+    codebase_portal.update_codebase(files)
     # Generate repo promtpt.
 
     # Output of the module is a concatenated text of the codebase
-    codebase = h.extract_codebase('generated_code')
+    codebase = codebase_portal.compress_codebase('generated_code')
     return codebase
 
 def debugger(codebase, model_config=None):
@@ -104,7 +106,7 @@ def debugger(codebase, model_config=None):
 
         # Install dependencies before starting the debugging process
     print("\033[94mInstalling dependencies...\033[00m")
-    print(h.list_dependencies())
+    print(codebase_portal.list_dependencies())
     os.system("pip3 install -r generated_code/requirements.txt")
     print("\033[92mDependencies installed!\033[00m")
     
@@ -112,7 +114,7 @@ def debugger(codebase, model_config=None):
 
     while True:
         if not human_intervention_provided:
-            exit_code, error_msg = h.run_main()
+            exit_code, error_msg = codebase_portal.run_main()
         else:
             human_intervention_provided = False
         
@@ -157,9 +159,8 @@ def debugger(codebase, model_config=None):
                 if wandb_enabled:
                     wb.wandb_log_llm(debug_response, ai.model, ai.temperature, parent = globals.chain_span)
 
-                debugged_code = h.parse_chat(debug_response["response_text"])
-
-                h.to_files(debugged_code)
+                debugged_code = codebase_portal.extract_code(debug_response["response_text"])
+                codebase_portal.update_codebase(debugged_code)
                 
                 if any("requirements.txt" in file_name for file_name, _ in debugged_code):
                     print("\033[94mReinstalling updated dependencies...\033[00m")
@@ -173,7 +174,7 @@ def debugger(codebase, model_config=None):
                 attempts_left -= 1
     
     # Output of the module is a concatenated text of the codebase
-    codebase = h.extract_codebase('generated_code')
+    codebase = codebase_portal.compress_codebase('generated_code')
     return codebase
 
 def modify_codebase(codebase, model_config=None):
@@ -203,13 +204,13 @@ def modify_codebase(codebase, model_config=None):
             wb.wandb_log_llm(response, ai.model, ai.temperature, parent = globals.chain_span)
 
         # Parse the chat and extract files
-        files = h.parse_chat(response["response_text"])
+        files = codebase_portal.extract_code(response["response_text"])
 
         # Save the codebase.
-        h.to_files(files)
+        codebase_portal.save_scripts(files)
 
         # Extract the updated codebase
-        updated_codebase = h.extract_codebase('generated_code')
+        updated_codebase = codebase_portal.compress_codebase('generated_code')
 
         # After modification, invoke the debugger module on the updated codebase
         codebase = debugger(updated_codebase)
@@ -228,6 +229,6 @@ def create_readme(codebase, model_config=None):
         wb.wandb_log_llm(response, ai.model, ai.temperature, parent = globals.chain_span)
 
     # Save the response to a README.md file in the generated_code folder
-    h.to_files([("README.md", response["response_text"])])
+    codebase_portal.update_codebase([("README.md", response["response_text"])])
 
     return response
