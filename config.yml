@@ -2,7 +2,7 @@
 pipeline: 'engineering_pipeline'
 
 ### API Keys ###
-openai_api_key: 'YOUR_API_KEY'
+openai_api_key: 'YOUR API KEY'
 
 
 ### OpenAI Default Configs ###
@@ -16,4 +16,6 @@ default_frequency_penalty: 0
 default_presence_penalty: 0
 
 ### Logging ###
-wandb_enabled: true
+wandb_enabled: false
+
+working_codebase_dirname: 'generated_code' # A folder that exists 
