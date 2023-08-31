@@ -2,7 +2,7 @@
 pipeline: 'engineering_pipeline'
 
 ### API Keys ###
-openai_api_key: 'YOUR API KEY'
+openai_api_key: 'YOUR_API_KEY_HERE' 
 
 
 ### OpenAI Default Configs ###
