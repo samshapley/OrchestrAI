@@ -7,13 +7,16 @@ from codebase_manager import CodebaseManager
 import wandb_logging as wb
 import local_logging as ll
 import globals
-codebase_portal = CodebaseManager()
+
 
 # Load the configuration
 with open('config.yml', 'r') as f:
     config = yaml.safe_load(f)
 
 wandb_enabled = config['wandb_enabled'] # Set the wandb_enabled flag
+working_codebase_dirname = config['working_codebase_dirname'] # Where code is accessed during a pipeline run
+
+codebase_portal = CodebaseManager(working_codebase_dirname)
 
 def start_module(module_input, dummy=None):   
     """This function is used to invoke the start module, to accept user input into the pipeline""" 
@@ -71,7 +74,7 @@ def chameleon(prompt, module_name, model_config=None):
 def engineer(prompt, model_config=None):
     """This function is used to invoke the engineer module.
     The generated code is extracted from the response and
-    saved to the generated_code folder."""
+    saved to the working codebase."""
 
     module_name = "engineer"
     ai = AI(module_name, model_config=model_config)
@@ -93,7 +96,7 @@ def engineer(prompt, model_config=None):
     # Generate repo promtpt.
 
     # Output of the module is a concatenated text of the codebase
-    codebase = codebase_portal.compress_codebase('generated_code')
+    codebase = codebase_portal.compress_codebase()
     return codebase
 
 def debugger(codebase, model_config=None):
@@ -107,7 +110,7 @@ def debugger(codebase, model_config=None):
         # Install dependencies before starting the debugging process
     print("\033[94mInstalling dependencies...\033[00m")
     print(codebase_portal.list_dependencies())
-    os.system("pip3 install -r generated_code/requirements.txt")
+    os.system(f"pip3 install -r {working_codebase_dirname}/requirements.txt")
     print("\033[92mDependencies installed!\033[00m")
     
     human_intervention_provided = False
@@ -164,7 +167,7 @@ def debugger(codebase, model_config=None):
                 
                 if any("requirements.txt" in file_name for file_name, _ in debugged_code):
                     print("\033[94mReinstalling updated dependencies...\033[00m")
-                    os.system("pip3 install -r generated_code/requirements.txt")
+                    os.system(f"pip3 install -r {working_codebase_dirname}/requirements.txt")
                     print("\033[92mUpdated dependencies installed!\033[00m")
                 
                 print("\033[93mDebugger module has made an attempt to fix. Rerunning main.py...\033[00m")
@@ -174,7 +177,7 @@ def debugger(codebase, model_config=None):
                 attempts_left -= 1
     
     # Output of the module is a concatenated text of the codebase
-    codebase = codebase_portal.compress_codebase('generated_code')
+    codebase = codebase_portal.compress_codebase()
     return codebase
 
 def modify_codebase(codebase, model_config=None):
@@ -207,10 +210,10 @@ def modify_codebase(codebase, model_config=None):
         files = codebase_portal.extract_code(response["response_text"])
 
         # Save the codebase.
-        codebase_portal.save_scripts(files)
+        codebase_portal.update_codebase(files)
 
         # Extract the updated codebase
-        updated_codebase = codebase_portal.compress_codebase('generated_code')
+        updated_codebase = codebase_portal.compress_codebase()
 
         # After modification, invoke the debugger module on the updated codebase
         codebase = debugger(updated_codebase)
@@ -228,7 +231,7 @@ def create_readme(codebase, model_config=None):
     if wandb_enabled:
         wb.wandb_log_llm(response, ai.model, ai.temperature, parent = globals.chain_span)
 
-    # Save the response to a README.md file in the generated_code folder
+    # Save the response to a README.md file to the working codebase
     codebase_portal.update_codebase([("README.md", response["response_text"])])
 
     return response

@@ -4,8 +4,10 @@ import sys
 import subprocess
 import re
 
+### Methods used by engineer, debugger and modify_codebase to build repositories
 class CodebaseManager:
-    def __init__(self, directory='generated_code'):
+    
+    def __init__(self, directory):
         self.directory = directory
         self.req_file_path = os.path.join(self.directory, "requirements.txt")
 
@@ -82,7 +84,7 @@ class CodebaseManager:
     
     def run_main(self):
         """
-        Execute the main.py script from the generated_code directory.
+        Execute the main.py script from the working codebase (set in config).
 
         This function utilizes subprocess.Popen to run the main.py script in a separate process.
         The stdout (standard output) of the subprocess is set to be printed in real-time to the terminal.
@@ -119,4 +121,6 @@ class CodebaseManager:
         _, stderr = process.communicate()
 
         return process.returncode, stderr
+    
+
         
