@@ -7,6 +7,7 @@ A couple of things to bear in mind
  2. This project aims to demonstrate a scalable framework for experimenting with autonomous agents. Instead of a fixed execution order, OrchestrAI offers flexibility to define and compare variations of strategies and settings, to find the best approach for your use case.
  3. Be nice to your agents, or you might regret it later.
 
+
 ## Getting Started
 
 Watch this demo video to see how you can build a low-code autonomous agent in 2 minutes.
@@ -17,6 +18,8 @@ Snippet of using the in-built engineer_pipeline to create a working pygame then 
 
 https://github.com/samshapley/OrchestrAI/assets/93387313/f161591a-edbd-42f0-847c-3264da59ed2e
 
+I asked for the ball to be even faster in the next question!
+
 ### Prerequisites
 
 To run OrchestrAI, you'll need:
@@ -25,7 +28,6 @@ To run OrchestrAI, you'll need:
 - OpenAI Python library  
 - networkx
 - PyYAML
-
 - wandb
 - matplotlib
 
