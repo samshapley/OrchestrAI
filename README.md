@@ -114,11 +114,11 @@ Once you have defined your pipeline, you can ensure it will be run by specifying
 
 OrchestrAI supports giving modules access to tools. A tool is an additional function the module can use during its operation. Currently, the only tool support is GENERATE_IMAGE. 
 
-The model is instructed to use tools when enabled via `tool_prompt.txt`. It will return a tag to activate the tool, which contains the JSON object required for the tool. For example, to generate an image with DALLE, the model will use the following tag.
+The model is instructed to use tools when enabled via `tool_prompt.txt`. It will return a tag to activate the tool, which contains the JSON object required for the tool. For example, to generate an image with DALLE and store it to the file, the model will use the following tag.
 
 _<@ { "tool_name": "GENERATE_IMAGE", "filename": choose , "prompt" : "Descriptive image prompt" } @>_
 
-You can add tools to the folder, and add the logic to the `tool_manager.py`. Multiple tools can be specified by the AI in the response, to be executed in order.
+You can add tools to the folder, and add the logic to the `tool_manager.py`. Multiple tools can be specified by the AI in the response, to be executed in order. I recommend trying tools with the `story_pipeline.yml` to see how they work in illustrating a story.
 
 ### Running the Script
 
