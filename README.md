@@ -3,9 +3,37 @@
 OrchestrAI is a Python-based system that orchestrates interactions between multiple instances of OpenAI's GPT-4 model to execute complex tasks. It uses the `networkx` library to manage dependencies between various AI modules, and YAML to define and manage task pipelines.  
 
 A couple of things to bear in mind
- 1. Autonomous Agents are still toys, and you're likely to come across several issues, breaks and associated problems the more complex  your pipeline / task is.
- 2. This project aims to demonstrate a scalable framework for experimenting with autonomous agents. Instead of a fixed execution order, OrchestrAI offers flexibility to define and compare variations of strategies and settings, to find the best approach for your use case.
- 3. Be nice to your agents, or you might regret it later.
+ - Autonomous Agents are still toys, and you're likely to come across several issues, breaks and associated problems the more complex  your pipeline / task is.
+ - This project aims to demonstrate a scalable framework for experimenting with autonomous agents. Instead of a fixed execution order, OrchestrAI offers flexibility to define and compare variations of strategies and settings, to find the best approach for your use case.
+ - Be nice to your agents, or you might regret it later.
+
+<hr>
+
+You'll be asked for your OpenAI API key, which will be stored locally.
+
+1. Clone the repo
+```bash
+git clone git@github.com:samshapley/OrchestrAI.git
+```
+
+2. Move into the directory
+```bash
+cd OrchestrAI
+```
+
+3. Install the requirements
+```bash
+pip3 install -r requirements.txt  
+```
+
+4. Run the agent
+```bash
+python3 agent.py
+```
+
+Straight out of the box, this will load the 'engineering_pipeline' Agent. 
+You can adjust this in the config.yml.
+Read and watch below to learn how to create your own custom agents.
 
 ## Getting Started
 
@@ -17,39 +45,26 @@ Snippet of using the in-built engineer_pipeline to create a working pygame then 
 
 https://github.com/samshapley/OrchestrAI/assets/93387313/f161591a-edbd-42f0-847c-3264da59ed2e
 
-### Prerequisites
-
-To run OrchestrAI, you'll need:
-
-- Python 3.7 or later
-- OpenAI Python library  
-- networkx
-- PyYAML
-
-- wandb
-- matplotlib
-
-Install these with pip:
-
-```bash
-pip install -r requirements.txt
-```
-
 ### Configuration  
 
 OrchestrAI requires the following files:
 
 - `agent.py` - Run the script and the specified pipeline.
-- `config.yml` - Configure the OpenAI API key, default model parameters, and pipeline to be executed. Also choose whether to enable wandb logging.
+- `config.yml` - Default model parameters, and pipeline to be executed. Also choose whether to enable wandb logging.
 - `ai.py` - Manages interactions with the OpenAI API.
 - `modules.py` - Contains available modules and their logic.
+- `tools` - Folder containing available tools and their logic.
 - `orchestrate.py` - Loads modules and pipelines, constructs a Directed Acyclic Graph (DAG) of operations, and executes them in the    correct order.
 - `codebase_manager.py` - Manages the generated codebase. Extraction of code from responses, alongside codebase update and compression.
+- `tool_manager.py` - Manages the tools available to the agent.
 - `helpers.py` - Provides helper functions.
 
 We store pipeline.yml files in the pipelines folder. This allows you to create multiple pipelines for different tasks. You can specify which pipeline the agent runs in the config.yml file.
 
-Agents run pipelines -> pipelines orchestrate modules -> modules make LLM calls and use tools.
+Agents run Pipelines.
+-> Pipelines orchestrate Modules.
+  -> Modules make LLM calls. 
+     -> LLM's use tools,
 
 ## Modules
 
@@ -123,7 +138,6 @@ Create a new one within the `tools` folder, and add the selection logic to `tool
 
 ### Running the Script
 
-Ensure that you've added your OpenAI API key to `config.yml`.
 You can toggle wandb logging, tools, and openai defaults in the config.yml file.
 
 To run OrchestrAI, execute `agent.py`:
@@ -210,6 +224,8 @@ def new_module(prompt):
 5. Add your new module to the pipeline, specifying its inputs and outputs.
 
 6. Run `orchestrate.py` to execute your new pipeline.
+
+You can repeat this process in a similar fashion to create new tools.
 
 The modularity of OrchestrAI makes it easy to add new AI capabilities as needed for your use case. Simply define the interface in `modules.py` and `pipeline.yml`, and OrchestrAI will automatically coordinate and execute the new module.
 
