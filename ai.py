@@ -39,7 +39,7 @@ class AI:
         self.frequency_penalty = model_config.get('frequency_penalty', default_frequency_penalty) if model_config else default_frequency_penalty
         self.presence_penalty = model_config.get('presence_penalty', default_presence_penalty) if model_config else default_presence_penalty
         self.module_name = module_name
-        self.system = h.load_system_prompt(module_name)
+        self.system, self.component_prompts = h.load_system_prompt(module_name)
         self.messages = [{"role": "system", "content": self.system}]
 
 
@@ -99,6 +99,7 @@ class AI:
         "status_code": status_code,
         "status_message": status_message,
         "system_prompt": self.system,
+        "component_prompts": self.component_prompts,
         "prompt": prompt,
         "max_tokens": self.max_tokens,
         "top_p": self.top_p,

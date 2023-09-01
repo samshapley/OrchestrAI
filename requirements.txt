@@ -4,3 +4,5 @@ openai==0.27.8
 PyYAML==6.0
 matplotlib
 wandb
+Pillow
+Requests

@@ -1,5 +1,12 @@
 import yaml
 import matplotlib.pyplot as plt
+from tool_manager import compress_tool_prompt
+
+# Load the configuration
+with open('config.yml', 'r') as f:
+    config = yaml.safe_load(f)
+
+tools_enabled = config['tools_enabled']
 
 def load_pipeline(file_path):
     """Load a pipeline configuration from a YAML file."""
@@ -11,14 +18,31 @@ def load_pipeline(file_path):
 def load_system_prompt(module_name):
     # Load the generic system prompt
     with open('general_system.txt', 'r') as file:
-        system_prompt = file.read().replace('\n', '')
+        general_system_prompt = file.read().replace('\n', '')
+
+    system_prompt = general_system_prompt
+
+    if tools_enabled:
+        with open(f'tools/tool_prompt.txt', 'r') as file:
+            tool_prompt = file.read().replace('\n', '')
+
+        tool_prompt = compress_tool_prompt(tool_prompt) # Compress the tool prompt
+        system_prompt += '\n\n' + tool_prompt + '\n'
+    else:
+        tool_prompt = None
 
     with open(f'system_prompts/{module_name}.txt', 'r') as file:
         module_prompt = file.read().replace('\n', '')
 
     system_prompt += '\n\n --- ' + module_name.upper() + ' ---\n\n' +  module_prompt + '\n'
 
-    return system_prompt
+    component_prompts = {
+        'general_system_prompt': general_system_prompt,
+        'tool_prompt': tool_prompt,
+        'module_prompt': module_prompt,
+    }
+        
+    return system_prompt, component_prompts
 
 def visualize_pipeline(nx, G):
     # Increase distance between nodes by setting k parameter

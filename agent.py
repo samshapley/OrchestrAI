@@ -20,12 +20,15 @@ with open('config.yml', 'r') as f:
 
 # Obtain the config variables
 wandb_enabled = config['wandb_enabled']
+tools_enabled = config['tools_enabled']
 pipeline_name = config['pipeline'] 
 pipeline_path = "pipelines/" + pipeline_name + ".yml"
 
 if wandb_enabled: # Initialize wandb if it's enabled
     wandb.init(project="OrchestrAI")
     wandb.config.wandb_enabled = wandb_enabled
+if tools_enabled:
+    print("\033[93mTools are enabled.\033[00m")
 
 def main():
     print("\033[95m ------- Welcome to OrchestrAI ------\033[00m")

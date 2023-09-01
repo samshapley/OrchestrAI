@@ -25,6 +25,7 @@ To run OrchestrAI, you'll need:
 - OpenAI Python library  
 - networkx
 - PyYAML
+
 - wandb
 - matplotlib
 
@@ -107,9 +108,23 @@ pipeline:
 ```
 Once you have defined your pipeline, you can ensure it will be run by specifying the pipeline name in the config.yml file.
 
+### Tools
+*Please note, tools have just been added, default tools_enabled = False*
+*Tools currently decreases agent performance, as the system prompt becomes too large and confusing for the model to understand. This is being worked on.*
+*Tools definitely doesn't work for GPT-3.5, it's just not powerful enough to handle the extended system prompt.*
+
+OrchestrAI supports giving modules access to tools. A tool is an additional function the module can use during its operation. Currently, the only tool support is GENERATE_IMAGE. 
+
+The model is instructed to use tools when enabled via `tool_prompt.txt`. It will return a tag to activate the tool, which contains the JSON object required for the tool. For example, to generate an image with DALLE and store it to the file, the model will use the following tag.
+
+<b><@ { "tool_name": "GENERATE_IMAGE", "filename": choose , "prompt" : "Descriptive image prompt" } @></b>
+
+Create a new one within the `tools` folder, and add the selection logic to `tool_manager.py`. Multiple tools can be specified by the AI in the response, to be executed in order. I recommend trying tools with the `story_pipeline.yml` to see how they work in illustrating a story. 
+
 ### Running the Script
 
 Ensure that you've added your OpenAI API key to `config.yml`.
+You can toggle wandb logging, tools, and openai defaults in the config.yml file.
 
 To run OrchestrAI, execute `agent.py`:
 
@@ -200,13 +215,15 @@ The modularity of OrchestrAI makes it easy to add new AI capabilities as needed 
 
 ## Logging with Weights and Biases
 
+![Screenshot 2023-09-01 at 12 23 50](https://github.com/samshapley/OrchestrAI/assets/93387313/682f1edc-19fb-48c4-b4fe-e1b76cd9f8cc)
+
 By default, interactions are logged using `log_action' during the process to a file created at the start of the agent. This file is then renamed and moved to the logs folder at the termination of the agent. This allows you to see the full history of the agent's interactions.
 
 However, we can leverage the power of Wandb Prompts (https://docs.wandb.ai/guides/prompts?_gl=1)
 
 Provided you've set up wandb, you can enable wandb logging in the config.yml file.
 
-This allows you to log the agent as a run, with modules as child runs of the chain. This allows you to see the full history of the agent's interactions, and the full history of each module's interactions. This is useful for debugging, and for understanding the agent's behaviour as you explore different pipelines and modules.
+This allows you to log the agent as a run, with modules as child runs of the chain. This allows you to see the full history of the agent's interactions, and the full history of each module's interactions. This is useful for debugging, and for understanding the agent's behaviour as you explore different pipelines and modules. With tools enabled, we also log the tools used in each module as child runs of the LLM.
 
 ------------------
 
