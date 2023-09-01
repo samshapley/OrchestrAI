@@ -46,7 +46,7 @@ def wandb_log_llm(data, model, temperature, parent):
 
 
 def wandb_log_tool(tool_name, start_time_ms, inputs, outputs, parent, status="success", metadata=None):
-
+    time.sleep(1)
     end_time_ms = round(time.time() * 1000)
 
     tool_span = Trace(

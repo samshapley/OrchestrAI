@@ -95,6 +95,8 @@ def engineer(prompt, model_config=None):
     ll.log_action({"module": module_name, "input": prompt, "output": response})
     if wandb_enabled:
         wb.wandb_log_llm(response, ai.model, ai.temperature, parent = globals.chain_span)
+    if tools_enabled:
+        tool.use_tools(response["response_text"])
 
     response_text = response["response_text"]
 
@@ -171,6 +173,8 @@ def debugger(codebase, model_config=None):
                 ll.log_action({"module": module_name, "input": prompt, "output": debug_response})
                 if wandb_enabled:
                     wb.wandb_log_llm(debug_response, ai.model, ai.temperature, parent = globals.chain_span)
+                if tools_enabled:
+                    tool.use_tools(debug_response["response_text"])
 
                 debugged_code = codebase_portal.extract_code(debug_response["response_text"])
                 codebase_portal.update_codebase(debugged_code)
@@ -215,6 +219,8 @@ def modify_codebase(codebase, model_config=None):
         ll.log_action({"module": module_name, "input": codebase, "output": response})
         if wandb_enabled:
             wb.wandb_log_llm(response, ai.model, ai.temperature, parent = globals.chain_span)
+        if tools_enabled:
+            tool.use_tools(response["response_text"])
 
         # Parse the chat and extract files
         files = codebase_portal.extract_code(response["response_text"])
@@ -240,6 +246,8 @@ def create_readme(codebase, model_config=None):
     ll.log_action({"module": module_name, "input": codebase, "output": response})
     if wandb_enabled:
         wb.wandb_log_llm(response, ai.model, ai.temperature, parent = globals.chain_span)
+    if tools_enabled:
+        tool.use_tools(response["response_text"])
 
     # Save the response to a README.md file to the working codebase
     codebase_portal.update_codebase([("README.md", response["response_text"])])

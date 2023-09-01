@@ -137,7 +137,6 @@ class CodebaseManager:
         _, stderr = process.communicate()
 
         if wandb_enabled:
-            time.sleep(0.5)
             wb.wandb_log_tool(
                 tool_name="run_main",
                 start_time_ms=start_time_ms,

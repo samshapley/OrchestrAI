@@ -4,6 +4,10 @@ import json
 from tools.images import generate_image
 
 def compress_tool_prompt(text):
+    """Compress the tool prompt by removing all line breaks and spaces.
+    This saves context for the model to use.
+    Only leave the important part uncompressed, which is the tool tags it should use."""
+
     # Find all instances of text enclosed in <@ @>
     tool_tags = re.findall(r'<@.*?@>', text, re.DOTALL)
     
@@ -11,8 +15,11 @@ def compress_tool_prompt(text):
     for tag in tool_tags:
         text = text.replace(tag, '')
     
-    # Remove all spaces and line breaks from the remaining text
+    # Remove all line breaks from the remaining text
     text = text.replace('\n', '')
+
+    # # Remove all spaces from the remaining text, commented out for now as haven't figured out tools completely
+    # text = text.replace(' ', '')
     
     # Add the tool tags back into the text
     for tag in tool_tags:
@@ -21,6 +28,9 @@ def compress_tool_prompt(text):
     return text
 
 def use_tools(response_text):
+    """Use tools on the response text in order of appearance.
+    Add new tools by updating the tools folder and adding a case to the switch statement below.
+    """
     # Extract all contents between <@ @> tags
     contents_list = re.findall('<@(.*)@>', response_text)
     if len(contents_list) == 0:
