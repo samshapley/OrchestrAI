@@ -1,12 +1,11 @@
 import openai
 import yaml
-
+import datetime
+import helpers as h
 
 # Load the configuration
 with open('config.yml', 'r') as f:
     config = yaml.safe_load(f)
-
-openai.api_key = config['openai_api_key']
 
 default_model = config['default_model']
 default_temperature = config['default_temperature']
@@ -14,19 +13,6 @@ default_top_p = config['default_top_p']
 default_max_tokens = config['default_max_tokens']
 default_frequency_penalty = config['default_frequency_penalty']
 default_presence_penalty = config['default_presence_penalty']
-
-
-# Check if the API key works
-try:
-    openai.Model.list()
-except openai.error.AuthenticationError:
-    raise ValueError("Invalid OpenAI API key")
-
-from wandb.sdk.data_types.trace_tree import Trace
-import datetime
-import helpers as h
-import globals
-import yaml
 
 class AI:
     def __init__(self, module_name, model_config=None, openai=openai):

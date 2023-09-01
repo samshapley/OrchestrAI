@@ -9,6 +9,7 @@ import yaml
 import atexit
 import json
 import os
+import openai
 
 # create logs directory if it doesn't exist
 if not os.path.exists('logs'):
@@ -17,6 +18,8 @@ if not os.path.exists('logs'):
 # Load the configuration
 with open('config.yml', 'r') as f:
     config = yaml.safe_load(f)
+
+h.authenticate() # Authenticate with OpenAI
 
 # Obtain the config variables
 wandb_enabled = config['wandb_enabled']
@@ -31,6 +34,7 @@ if tools_enabled:
     print("\033[93mTools are enabled.\033[00m")
 
 def main():
+    print("\n" + "-" * 80 + "\n")
     print("\033[95m ------- Welcome to OrchestrAI ------\033[00m")
     time.sleep(1) # dramatic effect
     

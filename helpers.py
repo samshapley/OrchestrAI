@@ -1,12 +1,54 @@
 import yaml
 import matplotlib.pyplot as plt
+import openai
 from tool_manager import compress_tool_prompt
+import os
 
 # Load the configuration
 with open('config.yml', 'r') as f:
     config = yaml.safe_load(f)
 
 tools_enabled = config['tools_enabled']
+
+
+def authenticate():
+    if not os.path.exists('api_key.yml'):
+        with open('api_key.yml', 'w') as f:
+            yaml.dump({}, f)
+
+    # Load the configuration
+    with open('api_key.yml', 'r') as f:
+        config = yaml.safe_load(f)
+
+    # Get the API key from the config file
+    api_key = config.get('openai_api_key')
+
+    # Function to test the validity of the API key
+    def is_valid_api_key(api_key):
+        try:
+            openai.api_key = api_key
+            openai.Model.list()  # Make a simple API request
+            return True
+        except Exception:
+            print("\033[91mInvalid API key.\033[00m")
+            return False
+
+    # Check if the API key is valid
+    if not is_valid_api_key(api_key):
+        while True:  # Keep asking for a new key until a valid one is provided
+            api_key = input("Please enter a valid OpenAI API key: ")
+            if is_valid_api_key(api_key):
+                break
+    else:
+        print("\033[92mSuccessfully authenticated with OpenAI.\033[00m")
+
+    # Save the valid API key back to the config file
+    config['openai_api_key'] = api_key
+    with open('api_key.yml', 'w') as f:
+        yaml.dump(config, f)
+
+    # Set the valid API key as an environment variable
+    os.environ['OPENAI_API_KEY'] = api_key
 
 def load_pipeline(file_path):
     """Load a pipeline configuration from a YAML file."""

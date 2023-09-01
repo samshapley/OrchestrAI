@@ -11,8 +11,7 @@ import os
 # Load the configuration
 with open('config.yml', 'r') as f:
     config = yaml.safe_load(f)
-
-openai.api_key = config['openai_api_key']
+    
 wandb_enabled = config['wandb_enabled']
 working_image_dirname = config['working_image_dirname']
 parent_directory = 'generated_outputs'

@@ -1,8 +1,5 @@
 ### Pipeline ###
-pipeline: 'advertising_pipeline'
-
-### API Keys ###
-openai_api_key: 'YOUR API KEY HERE'
+pipeline: 'engineering_pipeline'
 
 ### OpenAI Default Configs ###
 ### All calls to OpenAI will use these configs unless otherwise specified in pipeline ###
