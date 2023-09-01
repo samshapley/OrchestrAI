@@ -9,6 +9,7 @@ import yaml
 import atexit
 import json
 import os
+import openai
 
 # create logs directory if it doesn't exist
 if not os.path.exists('logs'):
@@ -17,6 +18,18 @@ if not os.path.exists('logs'):
 # Load the configuration
 with open('config.yml', 'r') as f:
     config = yaml.safe_load(f)
+
+# Check if the API key works
+while True:
+    try:
+        openai.api_key = os.getenv('OPENAI_API_KEY')
+        if not openai.api_key:
+            openai.api_key = input("Please enter your OpenAI API key: ")
+            os.environ['OPENAI_API_KEY'] = openai.api_key  # Set the API key as an environment variable
+        openai.Model.list()
+        break
+    except openai.error.AuthenticationError:
+        print("Invalid OpenAI API key. Please try again.")
 
 # Obtain the config variables
 wandb_enabled = config['wandb_enabled']
