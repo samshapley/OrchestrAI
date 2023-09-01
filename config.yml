@@ -1,9 +1,8 @@
 ### Pipeline ###
-pipeline: 'engineering_pipeline'
+pipeline: 'advertising_pipeline'
 
 ### API Keys ###
-openai_api_key: 'YOUR_API_KEY_HERE' 
-
+openai_api_key: 'YOUR API KEY HERE'
 
 ### OpenAI Default Configs ###
 ### All calls to OpenAI will use these configs unless otherwise specified in pipeline ###
@@ -18,9 +17,11 @@ default_presence_penalty: 0
 ### Logging ###
 wandb_enabled: false
 
-### Tools ###
-tools_enabled: true
-active_tools:
-  - 'generate_image'
+### Tools ### -- Early days, currently only an image generator tool.
+# Current version of tools leads to decreased agent performance (uses up context), so is disabled by default.
+tools_enabled: false
 
-working_codebase_dirname: 'generated_code' # A folder that exists 
+
+### Files to save outputs to generate_output folder ###
+working_codebase_dirname: 'code' 
+working_image_dirname: 'images' 

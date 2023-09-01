@@ -3,13 +3,25 @@ import shutil
 import sys
 import subprocess
 import re
+import wandb_logging as wb
+import globals
+from datetime import datetime
+import time
+
+# open the config file
+import yaml
+with open('config.yml', 'r') as f:
+    config = yaml.safe_load(f)
+
+wandb_enabled = config['wandb_enabled'] # Set the wandb_enabled flag
 
 ### Methods used by engineer, debugger and modify_codebase to build repositories
 class CodebaseManager:
     
     def __init__(self, directory):
-        self.directory = directory
-        self.req_file_path = os.path.join(self.directory, "requirements.txt")
+        self.parent_directory = 'generated_outputs'
+        self.directory = os.path.join(self.parent_directory, directory)
+        self.req_file_path = os.path.join(self.directory, 'requirements.txt')
 
     @staticmethod
     def extract_code(chat):
@@ -31,8 +43,9 @@ class CodebaseManager:
 
     def update_codebase(self, files):
         """Create or replace any script in the updates list."""
+
         if not os.path.exists(self.directory):
-            os.mkdir(self.directory)
+            os.makedirs(self.directory)
         
         # Create an empty requirements.txt file only if it doesn't exist
         if not os.path.exists(self.req_file_path):
@@ -45,6 +58,7 @@ class CodebaseManager:
             
             with open(os.path.join(self.directory, file_name), "w") as file:
                 file.write(file_content)
+        
 
     def compress_codebase(self):
         """Extracts the existing codebase from the directory.
@@ -72,6 +86,7 @@ class CodebaseManager:
                             # Get the relative path of the file
                             relative_filepath = os.path.relpath(filepath, self.directory)
                             result_content.append(f"----{relative_filepath}----\n{content}")
+                            e= None
                     except Exception as e:
                         print(f"Error processing file {filepath}: {e}")
 
@@ -97,6 +112,7 @@ class CodebaseManager:
                 - The return code (exit status) of the subprocess. A value of 0 typically indicates successful execution, while any other value suggests an error.
                 - The error message (if any) captured from the stderr of the subprocess.
         """
+        start_time_ms = round(datetime.now().timestamp() * 1000)
 
         # Start a new process to run the main.py script. 
         # stdout=None ensures the standard output (e.g., print statements, prompts for input) 
@@ -119,6 +135,19 @@ class CodebaseManager:
 
         # Wait for the subprocess to finish and capture any error message from the stderr.
         _, stderr = process.communicate()
+
+        if wandb_enabled:
+            time.sleep(0.5)
+            wb.wandb_log_tool(
+                tool_name="run_main",
+                start_time_ms=start_time_ms,
+                inputs={"python_command": python_command,
+                        "run_script_path": os.path.join(self.directory, "main.py")},
+                outputs={"stdout": process.stdout,
+                        "stderr": stderr},
+                status= "success" if process.returncode == 0 else "error",
+                parent=globals.llm_span   
+            )
 
         return process.returncode, stderr
     

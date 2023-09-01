@@ -12,9 +12,10 @@ pipeline:
     inputs: [request, advert_plan]
     output_name: slogan
   - module: script_writer
-    supplement: "This is for a TV spot, 30 seconds long."
-    model_config:
-      model: 'gpt-3.5-turbo'
-      temperature: 1.2
+    supplement: "TV spot, 30 seconds"
     inputs: [request, advert_plan, slogan]
     output_name: script
+  - module: illustrator
+    supplement: "Create the storyboard"
+    inputs: [request, script]
+    output_name: illustrations

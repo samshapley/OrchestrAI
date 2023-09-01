@@ -1,11 +1,10 @@
-You can use tools.
-You can use multiple tools in a response, the order of the tools is the order they are executed in.
+You can use tools. Tools are functions you can use via tag activation, not external progams that are fun.
+Tool use is first person, "I will use..."
+You can use multiple tools, the order of the tools is the order they are executed in.
 Activate a tool with the tag wrapped around a JSON object. It must be perfect json for the regex to work.
 <@ { "tool_name": "TOOL_NAME_HERE", "tool_input_1" : "etc" } @>
 
 Available tools:
 
-GENERATE_IMAGE - Used to generate an image from a text prompt. 
-<@ { "tool_name": "GENERATE_IMAGE", "prompt" : "Descriptive image prompt" } @>
-
-Return the json object if you think the response justifies tool use.
+GENERATE_IMAGE - Used to generate an image from a text prompt - Images are stored on generated_outputs/generated_images/{choose}.png
+<@ { "tool_name": "GENERATE_IMAGE", "filename": choose , "prompt" : "Descriptive image prompt" } @>

@@ -120,7 +120,7 @@ def debugger(codebase, model_config=None):
         # Install dependencies before starting the debugging process
     print("\033[94mInstalling dependencies...\033[00m")
     print(codebase_portal.list_dependencies())
-    os.system(f"pip3 install -r {working_codebase_dirname}/requirements.txt")
+    os.system(f"pip3 install -r generated_outputs/{working_codebase_dirname}/requirements.txt")
     print("\033[92mDependencies installed!\033[00m")
     
     human_intervention_provided = False
@@ -177,7 +177,7 @@ def debugger(codebase, model_config=None):
                 
                 if any("requirements.txt" in file_name for file_name, _ in debugged_code):
                     print("\033[94mReinstalling updated dependencies...\033[00m")
-                    os.system(f"pip3 install -r {working_codebase_dirname}/requirements.txt")
+                    os.system(f"pip3 install -r generated_outputs/{working_codebase_dirname}/requirements.txt")
                     print("\033[92mUpdated dependencies installed!\033[00m")
                 
                 print("\033[93mDebugger module has made an attempt to fix. Rerunning main.py...\033[00m")
