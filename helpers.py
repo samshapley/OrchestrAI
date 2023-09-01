@@ -23,6 +23,10 @@ def authenticate():
     # Get the API key from the config file
     api_key = config.get('openai_api_key')
 
+    # If the API key is None or the file is empty, ask for a new key
+    if not api_key:
+        api_key = input("Please enter a valid OpenAI API key: ")
+
     # Function to test the validity of the API key
     def is_valid_api_key(api_key):
         try:
