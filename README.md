@@ -25,6 +25,7 @@ To run OrchestrAI, you'll need:
 - OpenAI Python library  
 - networkx
 - PyYAML
+
 - wandb
 - matplotlib
 
@@ -213,6 +214,8 @@ def new_module(prompt):
 The modularity of OrchestrAI makes it easy to add new AI capabilities as needed for your use case. Simply define the interface in `modules.py` and `pipeline.yml`, and OrchestrAI will automatically coordinate and execute the new module.
 
 ## Logging with Weights and Biases
+
+![Screenshot 2023-09-01 at 12 23 50](https://github.com/samshapley/OrchestrAI/assets/93387313/682f1edc-19fb-48c4-b4fe-e1b76cd9f8cc)
 
 By default, interactions are logged using `log_action' during the process to a file created at the start of the agent. This file is then renamed and moved to the logs folder at the termination of the agent. This allows you to see the full history of the agent's interactions.
 
