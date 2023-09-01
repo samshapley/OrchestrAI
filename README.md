@@ -107,9 +107,23 @@ pipeline:
 ```
 Once you have defined your pipeline, you can ensure it will be run by specifying the pipeline name in the config.yml file.
 
+### Tools
+*Please note, tools have just been added, default tools_enabled = False*
+*Tools currently decreases agent performance, as the system prompt becomes too large and confusing for the model to understand. This is being worked on.*
+*Tools definitely doesn't work for GPT-3.5, it's just not powerful enough to handle the extended system prompt.*
+
+OrchestrAI supports giving modules access to tools. A tool is an additional function the module can use during its operation. Currently, the only tool support is GENERATE_IMAGE. 
+
+The model is instructed to use tools when enabled via `tool_prompt.txt`. It will return a tag to activate the tool, which contains the JSON object required for the tool. For example, to generate an image with DALLE, the model will use the following tag.
+
+_<@ { "tool_name": "GENERATE_IMAGE", "filename": choose , "prompt" : "Descriptive image prompt" } @>_
+
+You can add tools to the folder, and add the logic to the `tool_manager.py`. Multiple tools can be specified by the AI in the response, to be executed in order.
+
 ### Running the Script
 
 Ensure that you've added your OpenAI API key to `config.yml`.
+You can toggle wandb logging, tools, and openai defaults in the config.yml file.
 
 To run OrchestrAI, execute `agent.py`:
 
