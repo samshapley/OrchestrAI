@@ -118,7 +118,7 @@ The model is instructed to use tools when enabled via `tool_prompt.txt`. It will
 
 <b><@ { "tool_name": "GENERATE_IMAGE", "filename": choose , "prompt" : "Descriptive image prompt" } @></b>
 
-You can add tools to the folder, and add the logic to the `tool_manager.py`. Multiple tools can be specified by the AI in the response, to be executed in order. I recommend trying tools with the `story_pipeline.yml` to see how they work in illustrating a story.
+Create a new one within the `tools` folder, and add the selection logic to `tool_manager.py`. Multiple tools can be specified by the AI in the response, to be executed in order. I recommend trying tools with the `story_pipeline.yml` to see how they work in illustrating a story. 
 
 ### Running the Script
 
@@ -220,7 +220,7 @@ However, we can leverage the power of Wandb Prompts (https://docs.wandb.ai/guide
 
 Provided you've set up wandb, you can enable wandb logging in the config.yml file.
 
-This allows you to log the agent as a run, with modules as child runs of the chain. This allows you to see the full history of the agent's interactions, and the full history of each module's interactions. This is useful for debugging, and for understanding the agent's behaviour as you explore different pipelines and modules.
+This allows you to log the agent as a run, with modules as child runs of the chain. This allows you to see the full history of the agent's interactions, and the full history of each module's interactions. This is useful for debugging, and for understanding the agent's behaviour as you explore different pipelines and modules. With tools enabled, we also log the tools used in each module as child runs of the LLM.
 
 ------------------
 
