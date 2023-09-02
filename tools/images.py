@@ -60,7 +60,8 @@ def generate_image(contents_json):
             outputs={"caption": prompt},
             parent=globals.llm_span,
             status=status,
-            metadata={"error_message": str(e)}
+            metadata={"error_message": str(e)},
+            images=[(img, prompt)]
         )
             
     return prompt
