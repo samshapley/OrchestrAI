@@ -47,6 +47,32 @@ def main():
             'actions': []
         }, file)
 
+
+        ## Just in case it crashes, we want to log the root span to wandb anyway so we use atexit
+    def closing_log():
+
+        agent_end_time_ms = round(datetime.now().timestamp() * 1000)
+        
+        # Convert the timestamp to datetime
+        agent_end_time = datetime.fromtimestamp(agent_end_time_ms / 1000)
+
+        # Format the datetime object to a string
+        current_time = agent_end_time.strftime("%Y-%m-%d_%H-%M-%S")
+
+        
+        os.replace('memory_log.json', f'logs/log_{current_time}.json')
+        
+        if wandb.run is None:
+            return  
+        
+        else:
+            # Log the root span to Weights & Biases
+            root_span._span.end_time_ms = agent_end_time_ms
+            root_span.log(name="pipeline_trace")
+
+    # Register the function to be called on exit
+    atexit.register(closing_log)
+
     if wandb_enabled:
         globals.agent_start_time_ms = round(datetime.now().timestamp() * 1000) 
 
@@ -69,29 +95,6 @@ def main():
 
         root_span.add_child(globals.chain_span) # add the chain span as a child of the root span
 
-        ## Just in case it crashes, we want to log the root span to wandb anyway so we use atexit
-        def closing_log():
-
-            agent_end_time_ms = round(datetime.now().timestamp() * 1000)
-          
-            # Convert the timestamp to datetime
-            agent_end_time = datetime.fromtimestamp(agent_end_time_ms / 1000)
-
-            # Format the datetime object to a string
-            current_time = agent_end_time.strftime("%Y-%m-%d_%H-%M-%S")
-
-            
-            os.replace('memory_log.json', f'logs/log_{current_time}.json')
-            
-            if wandb.run is None:
-                return
-            
-            # Log the root span to Weights & Biases
-            root_span._span.end_time_ms = agent_end_time_ms
-            root_span.log(name="pipeline_trace")
-
-        # Register the function to be called on exit
-        atexit.register(closing_log)
 
     try:
         execute_pipeline(pipeline) # Execute the pipeline using the orchestrate.py script
