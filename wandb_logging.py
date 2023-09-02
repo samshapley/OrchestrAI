@@ -1,6 +1,8 @@
 # wandb_logging.py
+import wandb
 from wandb.sdk.data_types.trace_tree import Trace
 import time
+from PIL import Image
 import globals
 
 def wandb_log_llm(data, model, temperature, parent):
@@ -45,7 +47,7 @@ def wandb_log_llm(data, model, temperature, parent):
 
 
 
-def wandb_log_tool(tool_name, start_time_ms, inputs, outputs, parent, status="success", metadata=None):
+def wandb_log_tool(tool_name, start_time_ms, inputs, outputs, parent, status="success", metadata=None, images=None):
     time.sleep(1)
     end_time_ms = round(time.time() * 1000)
 
@@ -68,6 +70,10 @@ def wandb_log_tool(tool_name, start_time_ms, inputs, outputs, parent, status="su
         inputs=inputs,
         outputs=outputs
     )
+
+        # Log images if any
+    if images is not None:
+        wandb.log({"images": [wandb.Image(img) for img, img_caption in images]})
 
     # update the parent span's end time
     parent._span.end_time_ms = end_time_ms
