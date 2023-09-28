@@ -2,6 +2,9 @@
 
 OrchestrAI is a Python-based system that orchestrates interactions between multiple instances of OpenAI's GPT-4 model to execute complex tasks. It uses the `networkx` library to manage dependencies between various AI modules, and YAML to define and manage task pipelines.  
 
+Read the report on Weights and Biases Fully Connected: https://api.wandb.ai/links/samuel-shapley/7vgg699e
+
+
 A couple of things to bear in mind
  - Autonomous Agents are still toys, and you're likely to come across several issues, breaks and associated problems the more complex  your pipeline / task is.
  - This project aims to demonstrate a scalable framework for experimenting with autonomous agents. Instead of a fixed execution order, OrchestrAI offers flexibility to define and compare variations of strategies and settings, to find the best approach for your use case.
