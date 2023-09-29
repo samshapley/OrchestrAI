@@ -6,3 +6,4 @@ matplotlib
 wandb
 Pillow
 Requests
+pandas
