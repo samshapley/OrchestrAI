@@ -15,8 +15,8 @@ default_frequency_penalty = config['default_frequency_penalty']
 default_presence_penalty = config['default_presence_penalty']
 
 class AI:
-    def __init__(self, module_name, model_config=None, openai=openai):
-        self.openai = openai
+    def __init__(self, module_name, model_config=None, openai_client=None):
+        self.openai = openai_client or openai
         self.model_config = model_config
         self.model = model_config.get('model', default_model) if model_config else default_model
         self.temperature = model_config.get('temperature', default_temperature) if model_config else default_temperature
@@ -36,7 +36,7 @@ class AI:
         token_count = 0  
 
         try:
-            response = self.openai.ChatCompletion.create(
+            response = self.openai.chat.completions.create(
                 model=self.model,
                 stream=True,
                 messages=self.messages,
@@ -50,14 +50,13 @@ class AI:
             chat = []
             token_count = 0
             for chunk in response:
-                delta = chunk["choices"][0]["delta"]
-                msg = delta.get("content", "")
-                print(msg, end="")
-                chat.append(msg)
-                token_count += len(msg.split())  # estimate token usage
+                msg = chunk.choices[0].delta.content
+                if msg is not None:
+                    print(msg, end="")
+                    chat.append(msg)
+                    token_count += len(msg.split())  # estimate token usage
 
-            print()
-
+            print(len(chat))
             response_text = "".join(chat)
  
             llm_end_time_ms = round(datetime.datetime.now().timestamp() * 1000)  # logged in milliseconds
@@ -66,6 +65,7 @@ class AI:
             token_usage = {"total_tokens": token_count}
 
         except Exception as e:
+            print("Error: ", e)
             llm_end_time_ms = round(datetime.datetime.now().timestamp() * 1000)  # logged in milliseconds
             status_code="error"
             status_message=str(e)

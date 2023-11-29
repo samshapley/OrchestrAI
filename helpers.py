@@ -31,7 +31,7 @@ def authenticate():
     def is_valid_api_key(api_key):
         try:
             openai.api_key = api_key
-            openai.Model.list()  # Make a simple API request
+            openai.models.list()  # Make a simple API request
             return True
         except Exception:
             print("\033[91mInvalid API key.\033[00m")

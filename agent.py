@@ -9,7 +9,6 @@ import yaml
 import atexit
 import json
 import os
-import openai
 
 # create logs directory if it doesn't exist
 if not os.path.exists('logs'):
