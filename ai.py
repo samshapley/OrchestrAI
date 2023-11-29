@@ -55,8 +55,7 @@ class AI:
                     print(msg, end="")
                     chat.append(msg)
                     token_count += len(msg.split())  # estimate token usage
-
-            print(len(chat))
+                    
             response_text = "".join(chat)
  
             llm_end_time_ms = round(datetime.datetime.now().timestamp() * 1000)  # logged in milliseconds
